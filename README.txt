@@ -1,3 +1,8 @@
-LitLog hotfix build.
-- Save fix
-- Abstract extraction fallback
+
+LitLog HOTFIX v5
+- SW無効化（キャッシュ問題を回避）
+- DB_VER=4（保存の初期化を確実化）
+- 保存処理の安定化（明示トランザクション、エラーハンドリング）
+- Abstract抽出強化 + OCRフォールバック（Tesseract.js / 1ページ）
+- 英文→日本語 自動翻訳（抽出不可時はOCRテキストを翻訳）
+- 画面に「HOTFIX v5」バッジを表示（反映確認用）
