@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no"/>
-<title>Literature Log — HOTFIX v8</title>
-<link rel="manifest" href="manifest.webmanifest?v=8">
+<title>Literature Log — HOTFIX v9</title>
+<link rel="manifest" href="manifest.webmanifest?v=9">
 <meta name="theme-color" content="#0EA5E9">
 <style>
 :root{--bg:#0b0f14;--bg2:#0f141a;--card:#121821;--text:#e6eef6;--muted:#9fb2c3;--accent:#0ea5e9;--border:#1f2937;}
@@ -43,7 +43,7 @@ textarea{min-height:120px;resize:vertical}
   <div class="top">
     <span class="logo"></span>
     <div class="title">Literature Log</div>
-    <span class="badge">HOTFIX v8</span>
+    <span class="badge">HOTFIX v9</span>
     <div style="margin-left:auto;display:flex;gap:.4rem">
       <button class="btn-secondary" id="btnSettings">設定</button>
       <button class="btn-secondary" id="btnFolders">フォルダ</button>
@@ -107,12 +107,19 @@ textarea{min-height:120px;resize:vertical}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
-const DB_NAME='litlog-db',DB_VER=4;let db;
-function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;
- if(!d.objectStoreNames.contains('entries')){const os=d.createObjectStore('entries',{keyPath:'id',autoIncrement:true});os.createIndex('by_title','title');os.createIndex('by_folder','folder');}
- if(!d.objectStoreNames.contains('files')){d.createObjectStore('files',{keyPath:'id'});}
- if(!d.objectStoreNames.contains('meta')){d.createObjectStore('meta',{keyPath:'key'});}};
- r.onsuccess=e=>{db=e.target.result;res(db)};r.onerror=rej;});}
+const DB_NAME='litlog-db', DB_VER=4; let db;
+function openDB(){return new Promise((res,rej)=>{
+  const r=indexedDB.open(DB_NAME,DB_VER);
+  r.onupgradeneeded=e=>{const d=e.target.result;
+    if(!d.objectStoreNames.contains('entries')){
+      const os=d.createObjectStore('entries',{keyPath:'id',autoIncrement:true});
+      os.createIndex('by_title','title'); os.createIndex('by_folder','folder');
+    }
+    if(!d.objectStoreNames.contains('files')){ d.createObjectStore('files',{keyPath:'id'}); }
+    if(!d.objectStoreNames.contains('meta')){ d.createObjectStore('meta',{keyPath:'key'}); }
+  };
+  r.onsuccess=e=>{db=e.target.result; res(db)}; r.onerror=rej;
+});}
 const tx=(mode,...stores)=>db.transaction(stores,mode);
 const putMeta=(key,val)=>new Promise((res,rej)=>{const t=tx('readwrite','meta');t.objectStore('meta').put({key,val});t.oncomplete=()=>res();t.onerror=rej;});
 const getMeta=(key)=>new Promise((res,rej)=>{const r=tx('readonly','meta').objectStore('meta').get(key);r.onsuccess=()=>res(r.result?.val);r.onerror=rej;});
@@ -121,44 +128,74 @@ const el=(id)=>document.getElementById(id);
 const list=el('list'), form=el('formCard'), empty=el('emptyHint');
 let folders=['未分類'];
 
-async function refreshFoldersUI(){const ul=el('folderList');ul.innerHTML='';folders.forEach(f=>{const li=document.createElement('li');li.style.padding='.3rem 0';
- li.innerHTML=`<span style="background:#1a2330;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;color:#9cc6ff">${f}</span>
- <button class="btn-secondary" data-del="${f}" style="margin-left:.5rem">削除</button>`;ul.appendChild(li);});
- const sel=el('fldFolder');sel.innerHTML=folders.map(f=>`<option>${f}</option>`).join('');}
-async function loadFolders(){const saved=await getMeta('folders');if(Array.isArray(saved)&&saved.length)folders=saved;await refreshFoldersUI();}
+async function refreshFoldersUI(){
+  const ul=el('folderList'); ul.innerHTML='';
+  folders.forEach(f=>{
+    const li=document.createElement('li'); li.style.padding='.3rem 0';
+    li.innerHTML=`<span style="background:#1a2330;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;color:#9cc6ff">${f}</span>
+    <button class="btn-secondary" data-del="${f}" style="margin-left:.5rem">削除</button>`;
+    ul.appendChild(li);
+  });
+  const sel=el('fldFolder'); sel.innerHTML=folders.map(f=>`<option>${f}</option>`).join('');
+}
+async function loadFolders(){const saved=await getMeta('folders'); if(Array.isArray(saved)&&saved.length) folders=saved; await refreshFoldersUI();}
 
-function render(items){list.innerHTML=''; if(!items.length){empty.classList.remove('hidden'); return;} empty.classList.add('hidden');
- items.forEach(it=>{const div=document.createElement('div');div.className='item';const tags=(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
- div.innerHTML=`<div><h3>${it.title||'(無題)'}</h3>
- <div class="meta">${it.authors||''} ${it.journal? '・'+it.journal:''} ${it.pubDate? '・'+it.pubDate:''}</div>
- <div class="meta">フォルダ：${it.folder||'未分類'}　読了日：${it.date||''}</div>
- <div class="tags">${tags}</div>
- <p class="meta" style="margin-top:.3rem;color:#d6e2ee">${(it.abstract||'').slice(0,240)}${(it.abstract||'').length>240?'…':''}</p>
- <div style="margin-top:.4rem">${it.fileId?'<a href="#" class="btn-secondary" data-open="'+it.fileId+'">PDFを開く</a>':''}</div>
- </div>
- <div><button class="pill" data-edit="${it.id}">編集</button> <button class="pill" data-del="${it.id}">削除</button></div>`;
- list.appendChild(div);});}
+function render(items){
+  list.innerHTML='';
+  if(!items.length){ empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  items.forEach(it=>{
+    const div=document.createElement('div');
+    div.className='item';
+    const tags=(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+    div.innerHTML=`<div><h3>${it.title||'(無題)'}</h3>
+    <div class="meta">${it.authors||''} ${it.journal? '・'+it.journal:''} ${it.pubDate? '・'+it.pubDate:''}</div>
+    <div class="meta">フォルダ：${it.folder||'未分類'}　読了日：${it.date||''}</div>
+    <div class="tags">${tags}</div>
+    <p class="meta" style="margin-top:.3rem;color:#d6e2ee">${(it.abstract||'').slice(0,240)}${(it.abstract||'').length>240?'…':''}</p>
+    <div style="margin-top:.4rem">${it.fileId?'<a href="#" class="btn-secondary" data-open="'+it.fileId+'">PDFを開く</a>':''}</div>
+    </div>
+    <div><button class="pill" data-edit="${it.id}">編集</button> <button class="pill" data-del="${it.id}">削除</button></div>`;
+    list.appendChild(div);
+  });
+}
 function all(){return new Promise((res,rej)=>{const r=tx('readonly','entries').objectStore('entries').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=rej;});}
-async function refresh(){const q=el('q').value.trim().toLowerCase();const items=await all();const f=q?items.filter(it=>{
- const hay=[it.title,it.abstract,it.authors,it.journal,(it.tags||[]).join(','),it.folder].join(' ').toLowerCase();return hay.includes(q);
-}):items; f.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id-a.id);render(f);}
+async function refresh(){
+  const q=el('q').value.trim().toLowerCase();
+  const items=await all();
+  const f=q?items.filter(it=>{
+    const hay=[it.title,it.abstract,it.authors,it.journal,(it.tags||[]).join(','),it.folder].join(' ').toLowerCase();
+    return hay.includes(q);
+  }):items;
+  f.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id-a.id);
+  render(f);
+}
 
 function putFile(id, blob){return new Promise((res,rej)=>{const t=tx('readwrite','files');t.objectStore('files').put({id,blob});t.oncomplete=()=>res();t.onerror=rej;});}
 function getFile(id){return new Promise((res,rej)=>{const r=tx('readonly','files').objectStore('files').get(id);r.onsuccess=()=>res(r.result?.blob||null);r.onerror=rej;});}
 
 async function extractFromPdfText(file){
-  const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+  const ab=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:ab}).promise;
   let info={}; try{const meta=await pdf.getMetadata(); info=meta?.info||{};}catch{}
   let title=info.Title||''; let authors=info.Author||'';
   let text=''; const maxPages=Math.min(4,pdf.numPages);
-  for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); const t=content.items.map(i=>i.str).join(' '); text += '\n' + t; }
-  if(!title){ const first=(text.split('\n').map(s=>s.trim()).filter(Boolean)[0]||''); title=first.slice(0,160); }
+  for(let p=1;p<=maxPages;p++){
+    const page=await pdf.getPage(p);
+    const content=await page.getTextContent();
+    const t=content.items.map(i=>i.str).join(' ');
+    text += '\n' + t;
+  }
+  if(!title){
+    const first=(text.split('\n').map(s=>s.trim()).filter(Boolean)[0]||'');
+    title=first.slice(0,160);
+  }
   let abstract=''; const tLow=text.toLowerCase();
   const markers=[/abstract[:\s]/i,/summary[:\s]/i,/要旨[:：\s]/,/背景[:：\s]/,/目的[:：\s]/];
   let start=-1; for(const m of markers){ const idx=tLow.search(m); if(idx>=0){start=idx;break;} }
   if(start>=0){ abstract=text.slice(start).replace(/^.*?(abstract|summary|要旨|抄録)[:：]?\s*/i,'').trim(); }
   abstract=abstract.split(/(introduction|background|methods|materials|結果|方法|結論|discussion)/i)[0]||abstract;
-  return {title,authors,abstract, text}
+  return {title,authors,abstract,text};
 }
 
 async function ocrFirstPage(file){
@@ -177,10 +214,18 @@ async function ocrFirstPage(file){
 async function translateAbstractToJa(abstractEn){
   const key=await getMeta('openai_key'); if(!key) return null;
   const sys="You are a professional medical paper translator for physiotherapy. Translate accurately; avoid hallucinations.";
-  const user=`【アプリ要件】以下の英文抄録テキストを日本語訳のみで出力。見出し不要。抄録でないときは150–250語の要旨要約。\n=== ABSTRACT (EN) ===\n${abstractEn}\n=== END ===`;
+  const user=`【アプリ要件】以下の英文抄録テキストを日本語訳のみで出力。見出し不要。抄録でないときは150–250語の要旨要約。
+=== ABSTRACT (EN) ===
+${abstractEn}
+=== END ===`;
   const body={model:"gpt-4o-mini",messages:[{role:"system",content:sys},{role:"user",content:user}],temperature:0.1};
-  try{const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify(body)});
-    if(!res.ok) return null; const data=await res.json(); return (data.choices?.[0]?.message?.content||'').trim();
+  try{
+    const res=await fetch("https://api.openai.com/v1/chat/completions",{
+      method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify(body)
+    });
+    if(!res.ok) return null;
+    const data=await res.json();
+    return (data.choices?.[0]?.message?.content||'').trim();
   }catch(e){return null;}
 }
 
@@ -189,16 +234,41 @@ function resetForm(){el('fldPdf').value='';el('fldTitle').value='';el('fldAuthor
 
 async function saveEntry(existingId=null, existingFileId=null){
   try{
-    const o={ id: existingId||undefined, date: el('fldDate').value||new Date().toISOString().slice(0,10), folder: el('fldFolder').value||'未分類',
-      title: el('fldTitle').value.trim(), authors: el('fldAuthors').value.trim(), journal: el('fldJournal').value.trim(),
-      pubDate: el('fldPubDate').value, abstract: el('fldAbstract').value.trim(), tags: el('fldTags').value.split(',').map(s=>s.trim()).filter(Boolean),
-      fileId: existingFileId||null };
+    const o={
+      id: existingId || undefined,
+      date: el('fldDate').value || new Date().toISOString().slice(0,10),
+      folder: el('fldFolder').value || '未分類',
+      title: el('fldTitle').value.trim(),
+      authors: el('fldAuthors').value.trim(),
+      journal: el('fldJournal').value.trim(),
+      pubDate: el('fldPubDate').value,
+      abstract: el('fldAbstract').value.trim(),
+      tags: el('fldTags').value.split(',').map(s=>s.trim()).filter(Boolean),
+      fileId: existingFileId || null
+    };
     if(!o.title){ alert('タイトルを入力してください'); return; }
-    await new Promise((res,rej)=>{const t=tx('readwrite','entries'); const store=t.objectStore('entries'); const r= existingId? store.put(o): store.add(o);
-      r.onsuccess=()=>{ if(!existingId) o.id=r.result; t.oncomplete=()=>res(); }; r.onerror=e=>rej(e.target?.error||e); t.onerror=rej; });
+    if(!existingId) delete o.id; // ★ fix: new items must not include id
+
+    await new Promise((res,rej)=>{
+      const t=tx('readwrite','entries');
+      const store=t.objectStore('entries');
+      const r= existingId? store.put(o): store.add(o);
+      r.onsuccess=()=>{ if(!existingId) o.id=r.result; t.oncomplete=()=>res(); };
+      r.onerror=e=>rej(e.target?.error||e); t.onerror=rej;
+    });
+
     const pdfFile=el('fldPdf').files?.[0]||null;
-    if(pdfFile){ const fid='f_'+o.id; await new Promise((res,rej)=>{const t=tx('readwrite','files'); t.objectStore('files').put({id:fid, blob:pdfFile}); t.oncomplete=()=>res(); t.onerror=rej;}); o.fileId=fid;
-      await new Promise((res,rej)=>{const t=tx('readwrite','entries'); t.objectStore('entries').put(o); t.oncomplete=()=>res(); t.onerror=rej;}); }
+    if(pdfFile){
+      const fid='f_'+o.id;
+      await new Promise((res,rej)=>{
+        const t=tx('readwrite','files'); t.objectStore('files').put({id:fid, blob:pdfFile}); t.oncomplete=()=>res(); t.onerror=rej;
+      });
+      o.fileId=fid;
+      await new Promise((res,rej)=>{
+        const t=tx('readwrite','entries'); t.objectStore('entries').put(o); t.oncomplete=()=>res(); t.onerror=rej;
+      });
+    }
+
     toast('保存しました'); showForm(false); await refresh();
   }catch(e){ console.error('SAVE ERR', e); alert('保存に失敗しました：'+(e?.message||e)); }
 }
@@ -215,11 +285,22 @@ document.getElementById('btnCloseSettings').addEventListener('click', ()=> dlgSe
 const dlgFolders=document.getElementById('dlgFolders');
 document.getElementById('btnFolders').addEventListener('click', ()=> dlgFolders.classList.remove('hidden'));
 document.getElementById('btnCloseFolders').addEventListener('click', ()=> dlgFolders.classList.add('hidden'));
-document.getElementById('btnAddFolder').addEventListener('click', async ()=>{ const name=document.getElementById('fldNewFolder').value.trim(); if(!name) return;
- if(!folders.includes(name)) folders.push(name); await putMeta('folders', folders); document.getElementById('fldNewFolder').value=''; await refreshFoldersUI(); });
-document.getElementById('folderList').addEventListener('click', async (e)=>{ const name=e.target.getAttribute('data-del'); if(!name) return;
- if(name==='未分類') return alert('未分類は削除できません。'); if(!confirm(`フォルダ「${name}」を削除しますか？`)) return;
- folders = folders.filter(f=>f!==name); await putMeta('folders', folders); await refreshFoldersUI(); await refresh(); });
+document.getElementById('btnAddFolder').addEventListener('click', async ()=>{
+  const name=document.getElementById('fldNewFolder').value.trim(); if(!name) return;
+  if(!folders.includes(name)) folders.push(name);
+  await putMeta('folders', folders);
+  document.getElementById('fldNewFolder').value='';
+  await refreshFoldersUI();
+});
+document.getElementById('folderList').addEventListener('click', async (e)=>{
+  const name=e.target.getAttribute('data-del'); if(!name) return;
+  if(name==='未分類') return alert('未分類は削除できません。');
+  if(!confirm(`フォルダ「${name}」を削除しますか？`)) return;
+  folders = folders.filter(f=>f!==name);
+  await putMeta('folders', folders);
+  await refreshFoldersUI();
+  await refresh();
+});
 
 document.getElementById('fldPdf').addEventListener('change', async ()=>{
   const f = document.getElementById('fldPdf').files?.[0]; if(!f) return;
@@ -242,7 +323,13 @@ document.getElementById('fldPdf').addEventListener('change', async ()=>{
   }catch(e){ console.error('PDF parse error', e); alert('PDFの読み取りに失敗しました'); }
 });
 
-(async function init(){ await openDB(); await loadFolders(); el('fldDate').value=new Date().toISOString().slice(0,10); el('fldFolder').value=folders[0]; await refresh(); })();
+(async function init(){
+  await openDB();
+  await loadFolders();
+  el('fldDate').value=new Date().toISOString().slice(0,10);
+  el('fldFolder').value=folders[0];
+  await refresh();
+})();
 </script>
 </body>
 </html>
