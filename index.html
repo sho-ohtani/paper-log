@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no"/>
-<title>Literature Log — HOTFIX v5</title>
-<link rel="manifest" href="manifest.webmanifest?v=5">
+<title>Literature Log — HOTFIX v8</title>
+<link rel="manifest" href="manifest.webmanifest?v=8">
 <meta name="theme-color" content="#0EA5E9">
 <style>
 :root{--bg:#0b0f14;--bg2:#0f141a;--card:#121821;--text:#e6eef6;--muted:#9fb2c3;--accent:#0ea5e9;--border:#1f2937;}
@@ -16,22 +16,22 @@ header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0b0f1
 .title{font-weight:700}
 .badge{margin-left:.5rem;font-size:12px;color:#0b0f14;background:#0ea5e9;padding:.15rem .45rem;border-radius:8px;font-weight:700}
 .search{display:flex;gap:.5rem;margin:.4rem .9rem 1rem}
-.search input{flex:1;padding:.8rem .9rem;border:1px solid var(--border);background:var(--bg2);color:var(--text);border-radius:12px;outline:none}
+.search input{flex:1;padding:.8rem .9rem;border:1px solid var(--border);background:var(--bg2);color:#e6eef6;border-radius:12px;outline:none}
 .btn{appearance:none;border:none;border-radius:12px;padding:.7rem 1rem;font-weight:600;color:#0b0f14;background:linear-gradient(135deg,#0ea5e9,#22d3ee);cursor:pointer}
-.btn-secondary{color:var(--text);background:#18212d;border:1px solid var(--border)}
+.btn-secondary{color:#e6eef6;background:#18212d;border:1px solid var(--border)}
 .wrap{padding:.5rem .9rem 5rem}
 .card{background:linear-gradient(180deg,#101622,#0f141a);border:1px solid var(--border);border-radius:16px;padding:1rem;margin:.7rem 0}
 .row{display:flex;gap:.6rem;flex-wrap:wrap}
 .row>*{flex:1 1 140px}
-label{color:var(--muted);font-size:12px;display:block;margin-bottom:.25rem}
-input[type=text],input[type=date],textarea,select{width:100%;padding:.7rem .8rem;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);outline:none}
+label{color:#9fb2c3;font-size:12px;display:block;margin-bottom:.25rem}
+input[type=text],input[type=date],textarea,select{width:100%;padding:.7rem .8rem;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:#e6eef6;outline:none}
 textarea{min-height:120px;resize:vertical}
 .item{padding:1rem;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#0f141a,#0c1117);display:grid;grid-template-columns:1fr auto;gap:.4rem;margin:.6rem 0}
 .item h3{margin:.2rem 0;font-size:16px}
-.meta{color:var(--muted);font-size:12px}
+.meta{color:#9fb2c3;font-size:12px}
 .tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}
 .tag{font-size:11px;color:#c7e8ff;background:#112232;border:1px solid #1b3b54;padding:.2rem .5rem;border-radius:999px}
-.pill{padding:.35rem .6rem;border-radius:12px;border:1px solid var(--border);color:var(--muted);font-size:12px;background:#121a25}
+.pill{padding:.35rem .6rem;border-radius:12px;border:1px solid var(--border);color:#9fb2c3;font-size:12px;background:#121a25}
 .footer{position:fixed;bottom:0;left:0;right:0;padding:.6rem .9rem;background:linear-gradient(0deg,#0b0f14 60%,#0b0f1400)}
 .hidden{display:none}
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#0ea5e9;color:#0b0f14;padding:.6rem 1rem;border-radius:10px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:.3s}
@@ -43,7 +43,7 @@ textarea{min-height:120px;resize:vertical}
   <div class="top">
     <span class="logo"></span>
     <div class="title">Literature Log</div>
-    <span class="badge">HOTFIX v5</span>
+    <span class="badge">HOTFIX v8</span>
     <div style="margin-left:auto;display:flex;gap:.4rem">
       <button class="btn-secondary" id="btnSettings">設定</button>
       <button class="btn-secondary" id="btnFolders">フォルダ</button>
@@ -84,7 +84,7 @@ textarea{min-height:120px;resize:vertical}
   </section>
 
   <section id="list"></section>
-  <p id="emptyHint" class="hidden" style="color:var(--muted)">登録は「追加」から。PDFの抄録は自動抽出/翻訳します（見つからない場合はOCR/先頭サマリーに自動切替）。</p>
+  <p id="emptyHint" class="hidden" style="color:#9fb2c3">登録は「追加」から。PDFの抄録は自動抽出/翻訳します（見つからない場合はOCR/先頭サマリーに自動切替）。</p>
 </main>
 
 <div id="dlgSettings" class="card hidden" style="position:fixed;inset:auto 0 0 0;margin:0;border-radius:16px 16px 0 0;">
@@ -108,7 +108,6 @@ textarea{min-height:120px;resize:vertical}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 const DB_NAME='litlog-db',DB_VER=4;let db;
-// ---- IndexedDB helpers ----
 function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;
  if(!d.objectStoreNames.contains('entries')){const os=d.createObjectStore('entries',{keyPath:'id',autoIncrement:true});os.createIndex('by_title','title');os.createIndex('by_folder','folder');}
  if(!d.objectStoreNames.contains('files')){d.createObjectStore('files',{keyPath:'id'});}
@@ -118,12 +117,10 @@ const tx=(mode,...stores)=>db.transaction(stores,mode);
 const putMeta=(key,val)=>new Promise((res,rej)=>{const t=tx('readwrite','meta');t.objectStore('meta').put({key,val});t.oncomplete=()=>res();t.onerror=rej;});
 const getMeta=(key)=>new Promise((res,rej)=>{const r=tx('readonly','meta').objectStore('meta').get(key);r.onsuccess=()=>res(r.result?.val);r.onerror=rej;});
 const toast=(msg)=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
-
 const el=(id)=>document.getElementById(id);
 const list=el('list'), form=el('formCard'), empty=el('emptyHint');
 let folders=['未分類'];
 
-// ---- UI ----
 async function refreshFoldersUI(){const ul=el('folderList');ul.innerHTML='';folders.forEach(f=>{const li=document.createElement('li');li.style.padding='.3rem 0';
  li.innerHTML=`<span style="background:#1a2330;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;color:#9cc6ff">${f}</span>
  <button class="btn-secondary" data-del="${f}" style="margin-left:.5rem">削除</button>`;ul.appendChild(li);});
@@ -149,15 +146,13 @@ async function refresh(){const q=el('q').value.trim().toLowerCase();const items=
 function putFile(id, blob){return new Promise((res,rej)=>{const t=tx('readwrite','files');t.objectStore('files').put({id,blob});t.oncomplete=()=>res();t.onerror=rej;});}
 function getFile(id){return new Promise((res,rej)=>{const r=tx('readonly','files').objectStore('files').get(id);r.onsuccess=()=>res(r.result?.blob||null);r.onerror=rej;});}
 
-// ---- PDF helpers ----
 async function extractFromPdfText(file){
   const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
   let info={}; try{const meta=await pdf.getMetadata(); info=meta?.info||{};}catch{}
   let title=info.Title||''; let authors=info.Author||'';
   let text=''; const maxPages=Math.min(4,pdf.numPages);
-  for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); const t=content.items.map(i=>i.str).join(' '); text+='
-'+t;}
-  if(!title){ const first=text.split('\n').map(s=>s.trim()).filter(Boolean)[0]||''; title=first.slice(0,160); }
+  for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); const t=content.items.map(i=>i.str).join(' '); text += '\n' + t; }
+  if(!title){ const first=(text.split('\n').map(s=>s.trim()).filter(Boolean)[0]||''); title=first.slice(0,160); }
   let abstract=''; const tLow=text.toLowerCase();
   const markers=[/abstract[:\s]/i,/summary[:\s]/i,/要旨[:：\s]/,/背景[:：\s]/,/目的[:：\s]/];
   let start=-1; for(const m of markers){ const idx=tLow.search(m); if(idx>=0){start=idx;break;} }
@@ -166,7 +161,6 @@ async function extractFromPdfText(file){
   return {title,authors,abstract, text}
 }
 
-// OCR fallback: render first page to canvas then Tesseract
 async function ocrFirstPage(file){
   try{
     const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
@@ -183,17 +177,13 @@ async function ocrFirstPage(file){
 async function translateAbstractToJa(abstractEn){
   const key=await getMeta('openai_key'); if(!key) return null;
   const sys="You are a professional medical paper translator for physiotherapy. Translate accurately; avoid hallucinations.";
-  const user=`【アプリ要件】以下の英文抄録テキストを日本語訳のみで出力。見出し不要。抄録でないときは150–250語の要旨要約。
-=== ABSTRACT (EN) ===
-${abstractEn}
-=== END ===`;
+  const user=`【アプリ要件】以下の英文抄録テキストを日本語訳のみで出力。見出し不要。抄録でないときは150–250語の要旨要約。\n=== ABSTRACT (EN) ===\n${abstractEn}\n=== END ===`;
   const body={model:"gpt-4o-mini",messages:[{role:"system",content:sys},{role:"user",content:user}],temperature:0.1};
   try{const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify(body)});
     if(!res.ok) return null; const data=await res.json(); return (data.choices?.[0]?.message?.content||'').trim();
   }catch(e){return null;}
 }
 
-// ---- Form logic ----
 function showForm(show=true){form.classList.toggle('hidden', !show); if(show) empty.classList.add('hidden');}
 function resetForm(){el('fldPdf').value='';el('fldTitle').value='';el('fldAuthors').value='';el('fldJournal').value='';el('fldPubDate').value='';el('fldAbstract').value='';el('fldTags').value=''; el('fldDate').value=new Date().toISOString().slice(0,10); el('fldFolder').value=folders[0]||'未分類';}
 
@@ -217,13 +207,11 @@ document.getElementById('q').addEventListener('input', refresh);
 document.getElementById('btnNew').addEventListener('click', ()=>{ resetForm(); showForm(true); document.getElementById('btnSave').onclick=()=>saveEntry(); });
 document.getElementById('btnCancel').addEventListener('click', ()=> showForm(false));
 
-// Settings
 const dlgSettings=document.getElementById('dlgSettings');
 document.getElementById('btnSettings').addEventListener('click', async ()=>{ dlgSettings.classList.remove('hidden'); document.getElementById('fldApiKey').value=(await getMeta('openai_key'))||''; });
 document.getElementById('btnSaveSettings').addEventListener('click', async ()=>{ await putMeta('openai_key', document.getElementById('fldApiKey').value.trim()); dlgSettings.classList.add('hidden'); toast('設定を保存しました'); });
 document.getElementById('btnCloseSettings').addEventListener('click', ()=> dlgSettings.classList.add('hidden'));
 
-// Folders
 const dlgFolders=document.getElementById('dlgFolders');
 document.getElementById('btnFolders').addEventListener('click', ()=> dlgFolders.classList.remove('hidden'));
 document.getElementById('btnCloseFolders').addEventListener('click', ()=> dlgFolders.classList.add('hidden'));
@@ -233,32 +221,26 @@ document.getElementById('folderList').addEventListener('click', async (e)=>{ con
  if(name==='未分類') return alert('未分類は削除できません。'); if(!confirm(`フォルダ「${name}」を削除しますか？`)) return;
  folders = folders.filter(f=>f!==name); await putMeta('folders', folders); await refreshFoldersUI(); await refresh(); });
 
-// PDF handling + OCR fallback
 document.getElementById('fldPdf').addEventListener('change', async ()=>{
   const f = document.getElementById('fldPdf').files?.[0]; if(!f) return;
   try{
     const res=await extractFromPdfText(f);
     if(!el('fldTitle').value && res.title) el('fldTitle').value=res.title;
     if(!el('fldAuthors').value && res.authors) el('fldAuthors').value=res.authors;
-    let abstract = res.abstract?.trim() || '';
+    let abstract = (res.abstract||'').trim();
     let ja='';
-    const hasJP=/[一-龥ぁ-んァ-ン]/.test(abstract);
-    const hasEN=/[A-Za-z]/.test(abstract);
     if(!abstract){
-      // OCR fallback
       const ocrText= await ocrFirstPage(f);
       if(ocrText && ocrText.trim().length>40){
         abstract = ocrText.slice(0,1200).trim();
       }
     }
-    if(abstract && !hasJP && /[A-Za-z]/.test(abstract) && !( /[一-龥ぁ-んァ-ン]/.test(abstract) )){
+    if(abstract && !/[一-龥ぁ-んァ-ン]/.test(abstract) && /[A-Za-z]/.test(abstract)){
       ja = await translateAbstractToJa(abstract) || '';
     }
     el('fldAbstract').value = (ja||abstract||'').trim();
   }catch(e){ console.error('PDF parse error', e); alert('PDFの読み取りに失敗しました'); }
 });
-
-// No service worker registration in this hotfix to avoid stale caches.
 
 (async function init(){ await openDB(); await loadFolders(); el('fldDate').value=new Date().toISOString().slice(0,10); el('fldFolder').value=folders[0]; await refresh(); })();
 </script>
