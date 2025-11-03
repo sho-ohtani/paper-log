@@ -1,644 +1,248 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <title>Literature Log</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0EA5E9">
-  <style>
-    :root {
-      --bg: #0b0f14;
-      --bg2:#0f141a;
-      --card:#121821;
-      --text:#e6eef6;
-      --muted:#9fb2c3;
-      --accent:#0ea5e9;
-      --accent-2:#22d3ee;
-      --danger:#ef4444;
-      --ok:#22c55e;
-      --border:#1f2937;
-    }
-    * { box-sizing: border-box; }
-    html, body { height:100%; background:var(--bg); color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-    header {
-      position: sticky; top:0; z-index:20;
-      background: linear-gradient(180deg, #0b0f1490, #0b0f1400 85%);
-      backdrop-filter: blur(8px);
-    }
-    .topbar {
-      display:flex; align-items:center; gap:.75rem; padding: .9rem .9rem .2rem;
-    }
-    .logo {
-      width:28px; height:28px; border-radius:8px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display:inline-block; position:relative;
-    }
-    .logo::after {
-      content:''; position:absolute; inset:4px; border-radius:6px; background:var(--bg);
-    }
-    .title { font-weight:700; letter-spacing:.2px; }
-    .search {
-      width:100%; margin:.4rem .9rem 1rem; display:flex; gap:.5rem;
-    }
-    .search input {
-      flex:1; padding:.8rem .9rem; border:1px solid var(--border); background:var(--bg2); color:var(--text);
-      border-radius:12px; outline:none; font-size:16px;
-    }
-    .btn {
-      appearance:none; border:none; border-radius:12px; padding:.8rem 1rem; font-weight:600; color:#0b0f14;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2)); cursor:pointer;
-    }
-    .btn-secondary {
-      color:var(--text); background: #18212d; border:1px solid var(--border);
-    }
-    .wrap { padding: .5rem .9rem 6rem; }
-    .card {
-      background:linear-gradient(180deg, #101622, #0f141a); border:1px solid var(--border); border-radius:16px; padding:1rem; margin:.7rem 0;
-    }
-    .row { display:flex; gap:.6rem; flex-wrap:wrap; }
-    .row > * { flex: 1 1 140px; }
-    label { color:var(--muted); font-size:12px; display:block; margin-bottom:.25rem; }
-    input[type="text"], input[type="date"], input[type="number"], textarea, select {
-      width:100%; padding:.7rem .8rem; border-radius:12px; border:1px solid var(--border); background:var(--bg2); color:var(--text); outline:none;
-    }
-    textarea { min-height:120px; resize:vertical; }
-    .list { margin-top:1rem; }
-    .item {
-      padding:1rem; border:1px solid var(--border); border-radius:14px; background:linear-gradient(180deg, #0f141a, #0c1117);
-      display:grid; grid-template-columns: 1fr auto; gap:.4rem;
-    }
-    .item h3 { margin:.2rem 0; font-size:16px; }
-    .meta { color:var(--muted); font-size:12px; }
-    .tags { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.3rem;}
-    .tag { font-size:11px; color:#c7e8ff; background:#112232; border:1px solid #1b3b54; padding:.2rem .5rem; border-radius:999px; }
-    .actions { display:flex; gap:.4rem; }
-    .pill { padding:.35rem .6rem; border-radius:12px; border:1px solid var(--border); color:var(--muted); font-size:12px; background:#121a25;}
-    .footer {
-      position:fixed; bottom:0; left:0; right:0; padding:.6rem .9rem; background:linear-gradient(0deg, #0b0f14 60%, #0b0f1400);
-      display:flex; gap:.5rem;
-    }
-    .hidden { display:none; }
-    a.btn-link { color: #7dd3fc; text-decoration: none; border-bottom:1px dashed #164e63; }
-    .danger { background: linear-gradient(135deg, #ef4444, #f59e0b); color:#0b0f14; }
-    .ok { background: linear-gradient(135deg, #22c55e, #84cc16); color:#0b0f14; }
-    .small { font-size:12px; }
-    .folder { padding:.2rem .5rem; background:#1a2330; border:1px solid var(--border); border-radius:8px; color:#9cc6ff; }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no"/>
+<title>Literature Log</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0EA5E9">
+<style>
+:root{--bg:#0b0f14;--bg2:#0f141a;--card:#121821;--text:#e6eef6;--muted:#9fb2c3;--accent:#0ea5e9;--border:#1f2937;}
+*{box-sizing:border-box}html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0b0f1490,#0b0f1400 85%);backdrop-filter:blur(8px)}
+.top{display:flex;gap:.6rem;align-items:center;padding:.9rem .9rem .2rem}
+.logo{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#0ea5e9,#22d3ee);position:relative}
+.logo::after{content:'';position:absolute;inset:4px;border-radius:6px;background:#0b0f14}
+.title{font-weight:700}
+.search{display:flex;gap:.5rem;margin:.4rem .9rem 1rem}
+.search input{flex:1;padding:.8rem .9rem;border:1px solid var(--border);background:var(--bg2);color:var(--text);border-radius:12px;outline:none}
+.btn{appearance:none;border:none;border-radius:12px;padding:.7rem 1rem;font-weight:600;color:#0b0f14;background:linear-gradient(135deg,#0ea5e9,#22d3ee);cursor:pointer}
+.btn-secondary{color:var(--text);background:#18212d;border:1px solid var(--border)}
+.wrap{padding:.5rem .9rem 5rem}
+.card{background:linear-gradient(180deg,#101622,#0f141a);border:1px solid var(--border);border-radius:16px;padding:1rem;margin:.7rem 0}
+.row{display:flex;gap:.6rem;flex-wrap:wrap}
+.row>*{flex:1 1 140px}
+label{color:var(--muted);font-size:12px;display:block;margin-bottom:.25rem}
+input[type=text],input[type=date],textarea,select{width:100%;padding:.7rem .8rem;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);outline:none}
+textarea{min-height:120px;resize:vertical}
+.item{padding:1rem;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#0f141a,#0c1117);display:grid;grid-template-columns:1fr auto;gap:.4rem;margin:.6rem 0}
+.item h3{margin:.2rem 0;font-size:16px}
+.meta{color:var(--muted);font-size:12px}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}
+.tag{font-size:11px;color:#c7e8ff;background:#112232;border:1px solid #1b3b54;padding:.2rem .5rem;border-radius:999px}
+.pill{padding:.35rem .6rem;border-radius:12px;border:1px solid var(--border);color:var(--muted);font-size:12px;background:#121a25}
+.footer{position:fixed;bottom:0;left:0;right:0;padding:.6rem .9rem;background:linear-gradient(0deg,#0b0f14 60%,#0b0f1400)}
+.hidden{display:none}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#0ea5e9;color:#0b0f14;padding:.6rem 1rem;border-radius:10px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:.3s}
+.toast.show{opacity:1}
+</style>
 </head>
 <body>
-  <header>
-    <div class="topbar">
-      <span class="logo" aria-hidden="true"></span>
-      <div class="title">Literature Log</div>
-      <div style="margin-left:auto" class="actions">
-        <button class="btn-secondary small" id="btnSettings">設定</button>
-        <button class="btn-secondary small" id="btnFolders">フォルダ</button>
-      </div>
-    </div>
-    <div class="search">
-      <input id="q" type="text" placeholder="キーワード検索（例：電気刺激療法、NMES、心不全）">
-      <button class="btn" id="btnNew">追加</button>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section id="formCard" class="card hidden" aria-label="新規登録フォーム">
-      <h2 style="margin-top:0">新規登録</h2>
-      <div class="row">
-        <div>
-          <label>読了日</label>
-          <input type="date" id="fldDate">
-        </div>
-        <div>
-          <label>フォルダ</label>
-          <select id="fldFolder"></select>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>PDFファイル</label>
-          <input type="file" id="fldPdf" accept="application/pdf">
-        </div>
-        <div>
-          <label>タイトル</label>
-          <input type="text" id="fldTitle" placeholder="自動抽出 または 手入力">
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>著者</label>
-          <input type="text" id="fldAuthors" placeholder="姓, 名; ...">
-        </div>
-        <div>
-          <label>掲載誌</label>
-          <input type="text" id="fldJournal" placeholder="Journal / 雑誌名">
-        </div>
-        <div>
-          <label>公開日</label>
-          <input type="date" id="fldPubDate">
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>要約（抄録の日本語サマリー）</label>
-          <textarea id="fldAbstract" placeholder="PDFから自動抽出/翻訳した内容を確認・修正"></textarea>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>タグ（カンマ区切り）</label>
-          <input type="text" id="fldTags" placeholder="例：電気刺激療法, 心不全, ICU-AW">
-        </div>
-      </div>
-      <div class="actions" style="margin-top:.6rem">
-        <button class="btn" id="btnSave">保存</button>
-        <button class="btn-secondary" id="btnCancel">キャンセル</button>
-        <button class="btn-secondary" id="btnPrepPrompt">翻訳用プロンプトを生成</button>
-      </div>
-    </section>
-
-    <section class="list" id="list"></section>
-    <p class="small" id="emptyHint" style="color:var(--muted)">登録は「追加」から。PDFを読み込み、タイトルや抄録を自動補助します（編集可）。</p>
-  </main>
-
-  <div id="dlgSettings" class="card hidden" style="position:fixed; inset:auto 0 0 0; margin:0; border-radius:16px 16px 0 0; padding-bottom:calc(env(safe-area-inset-bottom) + 1rem)">
-    <h3 style="margin-top:0">設定</h3>
-    <label>OpenAI API Key（任意・ローカル保存）</label>
-    <input type="text" id="fldApiKey" placeholder="sk-...">
-    <p class="small" style="color:var(--muted)">入力するとアプリ内で英語抄録の日本語要約を自動生成できます。未入力でもプロンプトをコピーしてChatGPTに貼り付け可能です。キーは端末にのみ保存されます。</p>
-    <div class="actions">
-      <button class="btn" id="btnSaveSettings">OK</button>
-      <button class="btn-secondary" id="btnCloseSettings">閉じる</button>
+<header>
+  <div class="top">
+    <span class="logo"></span>
+    <div class="title">Literature Log</div>
+    <div style="margin-left:auto;display:flex;gap:.4rem">
+      <button class="btn-secondary" id="btnSettings">設定</button>
+      <button class="btn-secondary" id="btnFolders">フォルダ</button>
     </div>
   </div>
+  <div class="search">
+    <input id="q" type="text" placeholder="検索（タイトル・抄録・著者・雑誌・タグ）">
+    <button class="btn" id="btnNew">追加</button>
+  </div>
+</header>
 
-  <div id="dlgFolders" class="card hidden" style="position:fixed; inset:auto 0 0 0; margin:0; border-radius:16px 16px 0 0; padding-bottom:calc(env(safe-area-inset-bottom) + 1rem)">
-    <h3 style="margin-top:0">フォルダ管理</h3>
+<main class="wrap">
+  <section id="formCard" class="card hidden">
+    <h3 style="margin-top:0">新規登録</h3>
     <div class="row">
-      <div><label>新規フォルダ名</label><input type="text" id="fldNewFolder"></div>
-      <div style="align-self:end"><button class="btn" id="btnAddFolder">追加</button></div>
+      <div><label>読了日</label><input type="date" id="fldDate"></div>
+      <div><label>フォルダ</label><select id="fldFolder"></select></div>
     </div>
-    <ul id="folderList" class="small" style="list-style:none; padding-left:0;"></ul>
-    <div class="actions">
-      <button class="btn-secondary" id="btnCloseFolders">閉じる</button>
+    <div class="row">
+      <div><label>PDFファイル</label><input type="file" id="fldPdf" accept="application/pdf"></div>
+      <div><label>タイトル</label><input type="text" id="fldTitle"></div>
     </div>
-  </div>
+    <div class="row">
+      <div><label>著者</label><input type="text" id="fldAuthors"></div>
+      <div><label>掲載誌</label><input type="text" id="fldJournal"></div>
+      <div><label>公開日</label><input type="date" id="fldPubDate"></div>
+    </div>
+    <div class="row">
+      <div><label>要約（抄録の日本語サマリー）</label><textarea id="fldAbstract" placeholder="自動抽出/翻訳後に表示"></textarea></div>
+    </div>
+    <div class="row">
+      <div><label>タグ（カンマ区切り）</label><input type="text" id="fldTags" placeholder="例：電気刺激療法, 心不全"></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnSave">保存</button>
+      <button class="btn-secondary" id="btnCancel">キャンセル</button>
+    </div>
+  </section>
 
-  <!-- pdf.js (CDN). Cached by the service worker after first load. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    // ---- IndexedDB Minimal Wrapper ----
-    const DB_NAME = 'litlog-db';
-    const DB_VER = 1;
-    let db;
-    function openDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VER);
-        req.onupgradeneeded = e => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains('entries')) {
-            const os = db.createObjectStore('entries', { keyPath:'id', autoIncrement:true });
-            os.createIndex('by_title','title',{unique:false});
-            os.createIndex('by_folder','folder',{unique:false});
-          }
-          if (!db.objectStoreNames.contains('files')) {
-            db.createObjectStore('files', { keyPath:'id' });
-          }
-          if (!db.objectStoreNames.contains('meta')) {
-            db.createObjectStore('meta', { keyPath:'key' });
-          }
-        };
-        req.onsuccess = e => { db = e.target.result; resolve(db); };
-        req.onerror = e => reject(e);
-      });
+  <section id="list"></section>
+  <p id="emptyHint" class="hidden" style="color:var(--muted)">登録は「追加」から。PDFの抄録は自動抽出/翻訳します（うまく行かない場合は第一ページ要約に自動切替）。</p>
+</main>
+
+<div id="dlgSettings" class="card hidden" style="position:fixed;inset:auto 0 0 0;margin:0;border-radius:16px 16px 0 0;">
+  <h3 style="margin-top:0">設定</h3>
+  <label>OpenAI API Key</label>
+  <input type="text" id="fldApiKey" placeholder="sk-...">
+  <p class="meta">※ 端末ローカルにのみ保存されます。未入力でも手動運用可能です。</p>
+  <div style="display:flex;gap:.5rem"><button class="btn" id="btnSaveSettings">OK</button><button class="btn-secondary" id="btnCloseSettings">閉じる</button></div>
+</div>
+
+<div id="dlgFolders" class="card hidden" style="position:fixed;inset:auto 0 0 0;margin:0;border-radius:16px 16px 0 0;">
+  <h3 style="margin-top:0">フォルダ</h3>
+  <div class="row"><div><label>新規フォルダ名</label><input type="text" id="fldNewFolder"></div><div style="align-self:end"><button class="btn" id="btnAddFolder">追加</button></div></div>
+  <ul id="folderList" style="list-style:none;padding-left:0"></ul>
+  <div><button class="btn-secondary" id="btnCloseFolders">閉じる</button></div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const DB_NAME='litlog-db',DB_VER=3;let db;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;
+ if(!d.objectStoreNames.contains('entries')){const os=d.createObjectStore('entries',{keyPath:'id',autoIncrement:true});os.createIndex('by_title','title');os.createIndex('by_folder','folder');}
+ if(!d.objectStoreNames.contains('files')){d.createObjectStore('files',{keyPath:'id'});}
+ if(!d.objectStoreNames.contains('meta')){d.createObjectStore('meta',{keyPath:'key'});}};
+ r.onsuccess=e=>{db=e.target.result;res(db)};r.onerror=rej;});}
+const tx=(mode,...stores)=>db.transaction(stores,mode);
+const putMeta=(key,val)=>new Promise((res,rej)=>{const t=tx('readwrite','meta');const r=t.objectStore('meta').put({key,val});t.oncomplete=()=>res();t.onerror=rej;});
+const getMeta=(key)=>new Promise((res,rej)=>{const r=tx('readonly','meta').objectStore('meta').get(key);r.onsuccess=()=>res(r.result?.val);r.onerror=rej;});
+const toast=(msg)=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+const el=(id)=>document.getElementById(id);
+const list=el('list'), form=el('formCard'), empty=el('emptyHint');
+let folders=['未分類'];
+
+async function refreshFoldersUI(){const ul=el('folderList');ul.innerHTML='';folders.forEach(f=>{const li=document.createElement('li');li.style.padding='.3rem 0';
+ li.innerHTML=`<span style="background:#1a2330;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;color:#9cc6ff">${f}</span>
+ <button class="btn-secondary" data-del="${f}" style="margin-left:.5rem">削除</button>`;ul.appendChild(li);});
+ const sel=el('fldFolder');sel.innerHTML=folders.map(f=>`<option>${f}</option>`).join('');}
+
+async function loadFolders(){const saved=await getMeta('folders');if(Array.isArray(saved)&&saved.length)folders=saved;await refreshFoldersUI();}
+
+function render(items){list.innerHTML=''; if(!items.length){empty.classList.remove('hidden'); return;} empty.classList.add('hidden');
+ items.forEach(it=>{const div=document.createElement('div');div.className='item';const tags=(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+ div.innerHTML=`<div><h3>${it.title||'(無題)'}</h3>
+ <div class="meta">${it.authors||''} ${it.journal? '・'+it.journal:''} ${it.pubDate? '・'+it.pubDate:''}</div>
+ <div class="meta">フォルダ：${it.folder||'未分類'}　読了日：${it.date||''}</div>
+ <div class="tags">${tags}</div>
+ <p class="meta" style="margin-top:.3rem;color:#d6e2ee">${(it.abstract||'').slice(0,240)}${(it.abstract||'').length>240?'…':''}</p>
+ <div style="margin-top:.4rem">${it.fileId?'<a href="#" class="btn-secondary" data-open="'+it.fileId+'">PDFを開く</a>':''}</div>
+ </div>
+ <div><button class="pill" data-edit="${it.id}">編集</button> <button class="pill" data-del="${it.id}">削除</button></div>`;
+ list.appendChild(div);});}
+
+function all(){return new Promise((res,rej)=>{const r=tx('readonly','entries').objectStore('entries').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=rej;});}
+
+async function refresh(){const q=el('q').value.trim().toLowerCase();const items=await all();const f=q?items.filter(it=>{
+ const hay=[it.title,it.abstract,it.authors,it.journal,(it.tags||[]).join(','),it.folder].join(' ').toLowerCase();return hay.includes(q);
+}):items; f.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id-a.id);render(f);}
+
+function putFile(id, blob){return new Promise((res,rej)=>{const t=tx('readwrite','files');const r=t.objectStore('files').put({id,blob});t.oncomplete=()=>res();t.onerror=rej;});}
+function getFile(id){return new Promise((res,rej)=>{const r=tx('readonly','files').objectStore('files').get(id);r.onsuccess=()=>res(r.result?.blob||null);r.onerror=rej;});}
+
+async function extractFromPdf(file){
+  const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+  let info={}; try{const meta=await pdf.getMetadata(); info=meta?.info||{};}catch{}
+  let title=info.Title||''; let authors=info.Author||'';
+  let text=''; const maxPages=Math.min(4,pdf.numPages);
+  for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); const t=content.items.map(i=>i.str).join(' '); text+='
+'+t;}
+  if(!title){ const first=text.split('
+').map(s=>s.trim()).filter(Boolean)[0]||''; title=first.slice(0,160); }
+  let abstract=''; const tLow=text.toLowerCase();
+  const markers=[/abstract[:\s]/i,/summary[:\s]/i,/要旨[:：\s]/,/背景[:：\s]/,/目的[:：\s]/];
+  let start=-1; for(const m of markers){ const idx=tLow.search(m); if(idx>=0){start=idx;break;} }
+  if(start>=0){ abstract=text.slice(start).replace(/^.*?(abstract|summary|要旨|抄録)[:：]?\s*/i,'').trim(); }
+  abstract=abstract.split(/(introduction|background|methods|materials|結果|方法|結論|discussion)/i)[0]||abstract;
+  if(!abstract){ abstract=text.slice(0,1200); }
+  return {title,authors,abstract};
+}
+
+async function translateAbstractToJa_v2(abstractEn){
+  const key=await getMeta('openai_key'); if(!key) return null;
+  const sys="You are a professional medical paper translator for physiotherapy. Translate accurately; avoid hallucinations.";
+  const user=`【アプリ要件】以下の英文抄録テキストを日本語訳のみで出力。見出し不要。抄録でないときは150–250語の要旨要約。
+=== ABSTRACT (EN) ===
+${abstractEn}
+=== END ===`;
+  const body={model:"gpt-4o-mini",messages:[{role:"system",content:sys},{role:"user",content:user}],temperature:0.1};
+  try{const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify(body)});
+    if(!res.ok) return null; const data=await res.json(); return (data.choices?.[0]?.message?.content||'').trim();
+  }catch(e){return null;}
+}
+
+function showForm(show=true){form.classList.toggle('hidden', !show);}
+function resetForm(){el('fldPdf').value='';el('fldTitle').value='';el('fldAuthors').value='';el('fldJournal').value='';el('fldPubDate').value='';el('fldAbstract').value='';el('fldTags').value=''; el('fldDate').value=new Date().toISOString().slice(0,10); el('fldFolder').value=folders[0]||'未分類';}
+
+async function saveEntry(existingId=null, existingFileId=null){
+  try{
+    const o={ id: existingId||undefined, date: el('fldDate').value||new Date().toISOString().slice(0,10), folder: el('fldFolder').value||'未分類',
+      title: el('fldTitle').value.trim(), authors: el('fldAuthors').value.trim(), journal: el('fldJournal').value.trim(),
+      pubDate: el('fldPubDate').value, abstract: el('fldAbstract').value.trim(), tags: el('fldTags').value.split(',').map(s=>s.trim()).filter(Boolean),
+      fileId: existingFileId||null };
+    if(!o.title){ alert('タイトルを入力してください'); return; }
+    const t=tx('readwrite','entries'); const store=t.objectStore('entries');
+    await new Promise((res,rej)=>{ const r= existingId? store.put(o): store.add(o); r.onsuccess=()=>{ if(!existingId) o.id=r.result; res(); }; r.onerror=rej; });
+    const pdfFile=el('fldPdf').files?.[0]||null;
+    if(pdfFile){ const fid='f_'+o.id; await putFile(fid, pdfFile); o.fileId=fid; const t2=tx('readwrite','entries'); await new Promise((res,rej)=>{ const r=t2.objectStore('entries').put(o); t2.oncomplete=()=>res(); t2.onerror=rej; }); }
+    toast('保存しました'); showForm(false); await refresh();
+  }catch(e){ alert('保存に失敗しました：'+(e?.message||e)); }
+}
+
+document.getElementById('q').addEventListener('input', refresh);
+document.getElementById('btnNew').addEventListener('click', ()=>{ resetForm(); showForm(true); document.getElementById('btnSave').onclick=()=>saveEntry(); });
+document.getElementById('btnCancel').addEventListener('click', ()=> showForm(false));
+
+// Settings
+const dlgSettings=document.getElementById('dlgSettings');
+document.getElementById('btnSettings').addEventListener('click', async ()=>{ dlgSettings.classList.remove('hidden'); document.getElementById('fldApiKey').value=(await getMeta('openai_key'))||''; });
+document.getElementById('btnSaveSettings').addEventListener('click', async ()=>{ await putMeta('openai_key', document.getElementById('fldApiKey').value.trim()); dlgSettings.classList.add('hidden'); toast('設定を保存しました'); });
+document.getElementById('btnCloseSettings').addEventListener('click', ()=> dlgSettings.classList.add('hidden'));
+
+// Folders
+const dlgFolders=document.getElementById('dlgFolders');
+document.getElementById('btnFolders').addEventListener('click', ()=> dlgFolders.classList.remove('hidden'));
+document.getElementById('btnCloseFolders').addEventListener('click', ()=> dlgFolders.classList.add('hidden'));
+document.getElementById('btnAddFolder').addEventListener('click', async ()=>{ const name=document.getElementById('fldNewFolder').value.trim(); if(!name) return;
+ if(!folders.includes(name)) folders.push(name); await putMeta('folders', folders); document.getElementById('fldNewFolder').value=''; await refreshFoldersUI(); });
+document.getElementById('folderList').addEventListener('click', async (e)=>{ const name=e.target.getAttribute('data-del'); if(!name) return;
+ if(name==='未分類') return alert('未分類は削除できません。'); if(!confirm(`フォルダ「${name}」を削除しますか？`)) return;
+ folders = folders.filter(f=>f!==name); await putMeta('folders', folders); await refreshFoldersUI(); await refresh(); });
+
+// PDF handling
+document.getElementById('fldPdf').addEventListener('change', async ()=>{
+  const f = document.getElementById('fldPdf').files?.[0]; if(!f) return;
+  try{
+    const {title,authors,abstract}=await extractFromPdf(f);
+    if(!el('fldTitle').value && title) el('fldTitle').value=title;
+    if(!el('fldAuthors').value && authors) el('fldAuthors').value=authors;
+    let ja='';
+    const hasJP=/[一-龥ぁ-んァ-ン]/.test(abstract);
+    const hasEN=/[A-Za-z]/.test(abstract);
+    if(abstract && !hasJP && hasEN){ ja = await translateAbstractToJa_v2(abstract) || ''; }
+    if(!abstract){
+      const ab=await f.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise; let text=''; const maxPages=Math.min(2,pdf.numPages);
+      for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); text+='
+'+content.items.map(i=>i.str).join(' '); }
+      const sample=text.slice(0,1200).trim();
+      if(sample){ const englishLikely=/[A-Za-z]/.test(sample) && !/[一-龥ぁ-んァ-ン]/.test(sample); if(englishLikely){ ja = await translateAbstractToJa_v2(sample) || ''; } }
+      el('fldAbstract').value = ja || sample || '';
+    } else {
+      el('fldAbstract').value = ja || abstract || '';
     }
-    const tx = (mode, ...stores) => db.transaction(stores, mode);
-    const putMeta = (key, val) => new Promise((res,rej)=>{
-      const r = tx('readwrite','meta').objectStore('meta').put({key, val}); r.onsuccess=()=>res(); r.onerror=rej;
-    });
-    const getMeta = (key) => new Promise((res,rej)=>{
-      const r = tx('readonly','meta').objectStore('meta').get(key); r.onsuccess=()=>res(r.result?.val); r.onerror=rej;
-    });
+  }catch(e){ alert('PDFの読み取りに失敗しました'); }
+});
 
-    // ---- UI State ----
-    const el = (id) => document.getElementById(id);
-    const formCard = el('formCard');
-    const list = el('list');
-    const emptyHint = el('emptyHint');
-    let folders = ['未分類'];
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js')); }
 
-    // ---- Folders ----
-    async function refreshFoldersUI() {
-      const ul = el('folderList');
-      ul.innerHTML = '';
-      folders.forEach(fn => {
-        const li = document.createElement('li');
-        li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center';
-        li.style.padding='.4rem 0'; li.style.borderBottom='1px solid var(--border)';
-        li.innerHTML = `<span class="folder">${fn}</span> <button class="btn-secondary small" data-del="${fn}">削除</button>`;
-        ul.appendChild(li);
-      });
-      const sel = el('fldFolder');
-      sel.innerHTML = folders.map(f=>`<option>${f}</option>`).join('');
-    }
-
-    async function loadFolders() {
-      const saved = await getMeta('folders');
-      if (Array.isArray(saved) && saved.length) folders = saved;
-      await refreshFoldersUI();
-    }
-
-    // ---- Entries ----
-    function renderItems(items) {
-      list.innerHTML = '';
-      if (!items.length) { emptyHint.classList.remove('hidden'); return; }
-      emptyHint.classList.add('hidden');
-      for (const it of items) {
-        const div = document.createElement('div');
-        div.className = 'item';
-        const tags = (it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
-        const pdfLink = it.fileId ? `<a class="btn-link" href="#" data-open="${it.fileId}">PDFを開く</a>` : '';
-        div.innerHTML = `
-          <div>
-            <h3>${it.title || '(無題)'}</h3>
-            <div class="meta">${it.authors || ''} ${it.journal ? '・'+it.journal : ''} ${it.pubDate? '・'+it.pubDate: ''}</div>
-            <div class="meta">フォルダ：<span class="folder">${it.folder||'未分類'}</span>　読了日：${it.date||''}</div>
-            <div class="tags">${tags}</div>
-            <p class="small" style="margin:.4rem 0 0; color:#d6e2ee;">${(it.abstract||'').slice(0,240)}${(it.abstract&&it.abstract.length>240)?'…':''}</p>
-            <div style="margin-top:.5rem">${pdfLink}</div>
-          </div>
-          <div class="actions">
-            <button class="pill" data-edit="${it.id}">編集</button>
-            <button class="pill danger" data-del="${it.id}">削除</button>
-          </div>
-        `;
-        list.appendChild(div);
-      }
-    }
-
-    function getAllEntries() {
-      return new Promise((res,rej)=>{
-        const r = tx('readonly','entries').objectStore('entries').getAll();
-        r.onsuccess = ()=>res(r.result||[]); r.onerror=rej;
-      });
-    }
-
-    async function refreshList() {
-      const items = await getAllEntries();
-      const q = el('q').value.trim().toLowerCase();
-      const filtered = q ? items.filter(it => {
-        const hay = [it.title, it.abstract, it.authors, it.journal, (it.tags||[]).join(','), it.folder].join(' ').toLowerCase();
-        return hay.includes(q);
-      }) : items;
-      filtered.sort((a,b)=> (b.date||'').localeCompare(a.date||'') || b.id - a.id);
-      renderItems(filtered);
-    }
-
-    // ---- File store ----
-    function putFile(id, blob) {
-      return new Promise((res,rej)=>{
-        const r = tx('readwrite','files').objectStore('files').put({id, blob});
-        r.onsuccess=()=>res(); r.onerror=rej;
-      });
-    }
-    function getFile(id) {
-      return new Promise((res,rej)=>{
-        const r = tx('readonly','files').objectStore('files').get(id);
-        r.onsuccess=()=>res(r.result?.blob||null); r.onerror=rej;
-      });
-    }
-
-    // ---- PDF helpers ----
-    async function extractFromPdf(file) {
-      // Use pdf.js to try reading metadata + first 2 pages to guess title/abstract
-      const arrayBuffer = await file.arrayBuffer();
-      const loadingTask = pdfjsLib.getDocument({data: arrayBuffer});
-      const pdf = await loadingTask.promise;
-      let meta = {};
-      try {
-        meta = await pdf.getMetadata();
-      } catch {}
-      let info = meta?.info || {};
-      let title = info?.Title || '';
-      let authors = info?.Author || '';
-      let text = '';
-      const maxPages = Math.min(2, pdf.numPages);
-      for (let p=1; p<=maxPages; p++) {
-        const page = await pdf.getPage(p);
-        const content = await page.getTextContent();
-        const pageText = content.items.map(i=>i.str).join(' ');
-        text += '\n' + pageText;
-      }
-      // Heuristics for title / abstract
-      if (!title) {
-        const firstLine = text.split('\n').map(s=>s.trim()).filter(Boolean)[0] || '';
-        title = firstLine.slice(0,150);
-      }
-      // Abstract extraction (simple)
-      let abstract = '';
-      const lower = text.toLowerCase();
-      let idx = lower.indexOf('abstract');
-      if (idx < 0) idx = text.indexOf('抄録');
-      if (idx >= 0) {
-        abstract = text.slice(idx, idx+1200);
-        abstract = abstract.split(/(introduction|background|目的|方法|結果|結論)/i)[0];
-        abstract = abstract.replace(/^abstract[:\s]*/i,'').replace(/^抄録[:：\s]*/,'').trim();
-      } else {
-        abstract = text.slice(0, 800);
-      }
-      return { title, authors, abstract };
-    }
-
-    // ---- OpenAI translation (auto, Abstract only, overwrite JA) ----
-    async function translateAbstractToJa_v2(abstractEn) {
-      const key = await getMeta('openai_key');
-      if (!key) return null;
-
-      const USER_PROMPT = `<MedicalTranslationPrompt>
-  <Attachment>ここに翻訳対象となる英語論文のPDFまたはURLを添付してください。</Attachment>
-
-  <Purpose>
-    <Item>この英語論文の内容を、正確かつ専門的に日本語で翻訳・要約してください。</Item>
-    <Item>本資料は、臨床経験豊富な理学療法士向けの解説に使用します。</Item>
-  </Purpose>
-
-  <UserContext>
-    <Role>あなたはプロの医療論文翻訳者・科学的要約者です。</Role>
-    <Expertise>私は当該分野において専門的知識を有する理学療法士です。</Expertise>
-    <Audience>厳密な学術的・臨床的理解を求める理学療法士です。</Audience>
-  </UserContext>
-
-  <Instructions>
-    <TitleAndCitation>
-      <Step>論文タイトルを自然な日本語へ翻訳してください。</Step>
-      <Step>著者名・年・原題・雑誌名・巻号・ページの参考文献形式を明記してください。</Step>
-      <Step>掲載雑誌名とインパクトファクター（IF）を記載し、エビデンスレベルも明示してください。</Step>
-    </TitleAndCitation>
-
-    <SectionalSummary>
-      <Sections>
-        <Section>Abstract（要旨）</Section>
-        <Section>Introduction（背景・目的）</Section>
-        <Section>Methods（研究デザイン・対象・介入・評価指標）</Section>
-        <Section>Results（主要結果：数値・統計）</Section>
-        <Section>Conclusion（結論）</Section>
-        <Section>Clinical Relevance（臨床的意義・理学療法士への示唆）</Section>
-      </Sections>
-    </SectionalSummary>
-
-    <DataFigures>
-      <Step>平均値・SD・CI・p値・有意差などの統計データを原文に忠実に記載してください。</Step>
-      <Step>数値に関する情報がPDFから取得不可能な場合、「（原文参照）」としてください。</Step>
-    </DataFigures>
-
-    <QualityControl>
-      <Step>原文の意図を正確に反映し、誤訳・過度な要約・誇張を避けてください。</Step>
-      <Step>情報不足時は決して推測した内容を生成せず、「情報なし」または「N/A」と記載してください。</Step>
-      <Step>完成前に再読し、誤訳や不自然な表現を修正してください。</Step>
-    </QualityControl>
-
-    <Format>
-      <Step>以下の形式で出力してください。</Step>
-    </Format>
-  </Instructions>
-
-  <Output>
-- 日本語タイトル
-- 原著引用形式（著者・年・誌名・巻号・頁）
-- インパクトファクター
-- エビデンスレベル
-- Abstract・背景/目的・方法・結果・結論
-- 臨床的意義（箇条書き3点）
-- 統計情報要点一覧（p値・CI等）
-- Key Takeaways（3点）
-  </Output>
-</MedicalTranslationPrompt>`;
-
-      const APP_DIRECTIVE = "【アプリ要件】上記プロンプトは参照のみ。今回の出力は Abstract の日本語訳本文のみを返してください。他のセクションや見出し、メタ情報は出力しないでください。";
-
-      const sys = "You are a professional medical paper translator for physiotherapy. Translate accurately; avoid hallucinations.";
-      const user = `${USER_PROMPT}\n\n${APP_DIRECTIVE}\n\n=== ABSTRACT (EN) ===\n${abstractEn}\n=== END ===`;
-
-      const body = {
-        model: "gpt-4o-mini",
-        messages: [
-          {role:"system", content: sys},
-          {role:"user", content: user}
-        ],
-        temperature: 0.1
-      };
-
-      try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method:"POST",
-          headers: { "Content-Type":"application/json", "Authorization": `Bearer ${key}` },
-          body: JSON.stringify(body)
-        });
-        if (!res.ok) return null;
-        const data = await res.json();
-        let out = data.choices?.[0]?.message?.content?.trim() || null;
-        if (out) {
-          out = out.replace(/^(日本語タイトル|要旨|抄録)[:：]?\s*/i, '').trim();
-        }
-        return out;
-      } catch (e) {
-        console.warn('翻訳失敗', e);
-        return null;
-      }
-    }
-
-    // ---- Event handlers ----
-    function showForm(show=true){ formCard.classList.toggle('hidden', !show); }
-    function resetForm(){
-      el('fldPdf').value = '';
-      el('fldTitle').value='';
-      el('fldAuthors').value='';
-      el('fldJournal').value='';
-      el('fldPubDate').value='';
-      el('fldAbstract').value='';
-      el('fldTags').value='';
-      el('fldDate').value = new Date().toISOString().slice(0,10);
-      el('fldFolder').value = folders[0] || '未分類';
-    }
-
-    async function saveEntry(existingId=null, existingFileId=null) {
-      const o = {
-        id: existingId || undefined,
-        date: el('fldDate').value || new Date().toISOString().slice(0,10),
-        folder: el('fldFolder').value || '未分類',
-        title: el('fldTitle').value.trim(),
-        authors: el('fldAuthors').value.trim(),
-        journal: el('fldJournal').value.trim(),
-        pubDate: el('fldPubDate').value,
-        abstract: el('fldAbstract').value.trim(),
-        tags: el('fldTags').value.split(',').map(s=>s.trim()).filter(Boolean),
-        fileId: existingFileId || null
-      };
-      const pdfFile = el('fldPdf').files?.[0] || null;
-      const t = tx('readwrite','entries');
-      const store = t.objectStore('entries');
-      if (existingId) {
-        await new Promise((res,rej)=>{ const r = store.put(o); r.onsuccess=()=>res(); r.onerror=rej; });
-      } else {
-        o.id = await new Promise((res,rej)=>{ const r = store.add(o); r.onsuccess=()=>res(r.result); r.onerror=rej; });
-      }
-      if (pdfFile) {
-        const fid = 'f_'+o.id;
-        await putFile(fid, pdfFile);
-        o.fileId = fid;
-        await new Promise((res,rej)=>{ const r = store.put(o); r.onsuccess=()=>res(); r.onerror=rej; });
-      }
-      await refreshList();
-      showForm(false);
-    }
-
-    // Open PDF & edit/delete
-    list.addEventListener('click', async (e)=>{
-      const openId = e.target.getAttribute('data-open');
-      const delId = e.target.getAttribute('data-del');
-      const editId = e.target.getAttribute('data-edit');
-      if (openId) {
-        const blob = await getFile(openId);
-        if (!blob) return alert('PDFが見つかりません。');
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      } else if (delId) {
-        if (!confirm('削除しますか？')) return;
-        const t1 = tx('readwrite','entries'); t1.objectStore('entries').delete(Number(delId));
-        const t2 = tx('readwrite','files'); t2.objectStore('files').delete('f_'+delId);
-        await refreshList();
-      } else if (editId) {
-        const id = Number(editId);
-        const cur = await new Promise((res,rej)=>{
-          const r = tx('readonly','entries').objectStore('entries').get(id);
-          r.onsuccess = ()=>res(r.result); r.onerror=rej;
-        });
-        resetForm();
-        showForm(true);
-        el('fldDate').value = cur.date || '';
-        el('fldFolder').value = cur.folder || folders[0];
-        el('fldTitle').value = cur.title || '';
-        el('fldAuthors').value = cur.authors || '';
-        el('fldJournal').value = cur.journal || '';
-        el('fldPubDate').value = cur.pubDate || '';
-        el('fldAbstract').value = cur.abstract || '';
-        el('fldTags').value = (cur.tags||[]).join(', ');
-        el('btnSave').onclick = ()=>saveEntry(cur.id, cur.fileId);
-      }
-    });
-
-    // Search
-    el('q').addEventListener('input', refreshList);
-
-    // Add new
-    el('btnNew').addEventListener('click', ()=>{
-      resetForm();
-      showForm(true);
-      el('btnSave').onclick = ()=>saveEntry();
-    });
-    el('btnCancel').addEventListener('click', ()=> showForm(false));
-
-    // PDF auto-extract + auto-translate (Abstract only, overwrite JA)
-    el('fldPdf').addEventListener('change', async ()=>{
-      const f = el('fldPdf').files?.[0];
-      if (!f) return;
-      try {
-        const {title, authors, abstract} = await extractFromPdf(f);
-        if (!el('fldTitle').value && title) el('fldTitle').value = title;
-        if (!el('fldAuthors').value && authors) el('fldAuthors').value = authors;
-        const isEnglish = /[a-zA-Z]/.test(abstract) && !/[一-龥ぁ-んァ-ン]/.test(abstract);
-        if (isEnglish) {
-          const ja = await translateAbstractToJa_v2(abstract);
-          el('fldAbstract').value = (ja || abstract);
-        } else {
-          el('fldAbstract').value = abstract;
-        }
-      } catch (e) {
-        console.warn('PDF抽出に失敗:', e);
-      }
-    });
-
-    // Prepare translation prompt (copyable template)
-    el('btnPrepPrompt').addEventListener('click', async ()=>{
-      const title = el('fldTitle').value || '(タイトル未入力)';
-      const abs = el('fldAbstract').value || '(抄録テキスト未抽出)';
-      const tmpl = `<MedicalTranslationPrompt>
-<Attachment>ここにPDF本体またはURLを添付してください。</Attachment>
-
-<Purpose>
-  <Item>この英語論文を正確かつ専門的に日本語で翻訳・要約してください。</Item>
-  <Item>本資料は臨床経験豊富な理学療法士向けの解説に使用します。</Item>
-</Purpose>
-
-<UserContext>
-  <Role>あなたはプロの医療論文翻訳者・科学的要約者です。</Role>
-  <Expertise>私は理学療法士であり、当該分野の専門知識を有します。</Expertise>
-  <Audience>学術・臨床の両面から厳密な理解を前提とします。</Audience>
-</UserContext>
-
-<Instructions>
-  <TitleAndCitation>
-    <Step>論文タイトル：${title}</Step>
-  </TitleAndCitation>
-  <Abstract>
-    <Step>以下の抄録を日本語に翻訳し、150–250語で要約してください。</Step>
-    <Text>${abs}</Text>
-  </Abstract>
-</Instructions>
-</MedicalTranslationPrompt>`;
-      await navigator.clipboard.writeText(tmpl);
-      alert('翻訳用プロンプトをクリップボードにコピーしました。ChatGPTに貼り付けてください。');
-    });
-
-    // Settings dialog
-    const dlgSettings = el('dlgSettings');
-    el('btnSettings').addEventListener('click', async ()=>{
-      dlgSettings.classList.remove('hidden');
-      el('fldApiKey').value = (await getMeta('openai_key')) || '';
-    });
-    el('btnSaveSettings').addEventListener('click', async ()=>{
-      await putMeta('openai_key', el('fldApiKey').value.trim());
-      dlgSettings.classList.add('hidden');
-    });
-    el('btnCloseSettings').addEventListener('click', ()=> dlgSettings.classList.add('hidden'));
-
-    // Folders dialog
-    const dlgFolders = el('dlgFolders');
-    el('btnFolders').addEventListener('click', ()=> dlgFolders.classList.remove('hidden'));
-    el('btnCloseFolders').addEventListener('click', ()=> dlgFolders.classList.add('hidden'));
-    el('btnAddFolder').addEventListener('click', async ()=>{
-      const name = el('fldNewFolder').value.trim();
-      if (!name) return;
-      if (!folders.includes(name)) folders.push(name);
-      await putMeta('folders', folders);
-      el('fldNewFolder').value = '';
-      await refreshFoldersUI();
-    });
-    el('folderList').addEventListener('click', async (e)=>{
-      const name = e.target.getAttribute('data-del');
-      if (!name) return;
-      if (name === '未分類') return alert('未分類は削除できません。');
-      if (!confirm(`フォルダ「${name}」を削除しますか？`)) return;
-      folders = folders.filter(f=>f!==name);
-      await putMeta('folders', folders);
-      await refreshFoldersUI();
-      await refreshList();
-    });
-
-    // PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('./sw.js');
-      });
-    }
-
-    // Init
-    (async function init(){
-      await openDB();
-      await loadFolders();
-      resetForm();
-      await refreshList();
-    })();
-  </script>
+(async function init(){ await openDB(); await loadFolders(); el('fldDate').value=new Date().toISOString().slice(0,10); el('fldFolder').value=folders[0]; await refresh(); })();
+</script>
 </body>
 </html>

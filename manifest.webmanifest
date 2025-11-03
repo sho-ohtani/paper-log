@@ -1,7 +1,6 @@
 {
-  "name": "Literature Log (PWA)",
+  "name": "Literature Log",
   "short_name": "LitLog",
-  "description": "オフライン対応の文献読書ログ（PDF取り込み、要約メモ、検索、フォルダ分類、翻訳）",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0b0f14",
