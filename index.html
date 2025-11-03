@@ -3,464 +3,473 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
-<title>Literature Log — HOTFIX v12 IIFE</title>
+<title>Literature Log — HOTFIX v13</title>
 <meta name="theme-color" content="#0EA5E9">
-<link rel="icon" href="data:,"><!-- 404防止の空favicon -->
+<link rel="manifest" href="manifest.webmanifest?v=13">
 <style>
-:root{--bg:#0b0f14;--bg2:#0f141a;--card:#121821;--text:#e6eef6;--muted:#9fb2c3;--accent:#0ea5e9;--border:#1f2937}
-*{box-sizing:border-box}html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0b0f1490,#0b0f1400 85%);backdrop-filter:blur(8px)}
-.top{display:flex;gap:.6rem;align-items:center;padding:.9rem .9rem .2rem}
-.logo{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#0ea5e9,#22d3ee);position:relative}
+/* ================= UI THEME ================= */
+:root {
+ --bg:#0b0f14; --bg2:#0f141a; --card:#121821; --text:#e6eef6;
+ --muted:#9fb2c3; --accent:#0ea5e9; --border:#1f2937;
+}
+* { box-sizing:border-box; }
+html,body {
+ height:100%; margin:0; background:var(--bg);
+ color:var(--text); font-family:system-ui,-apple-system;
+}
+header {
+ position:sticky;top:0;z-index:10;
+ background:linear-gradient(180deg,#0b0f1490,#0b0f1400 85%);
+ backdrop-filter:blur(8px);
+}
+.top {
+ display:flex;gap:.6rem;align-items:center;
+ padding:.9rem .9rem .2rem;
+}
+.logo{width:26px;height:26px;border-radius:8px;
+ background:linear-gradient(135deg,#0ea5e9,#22d3ee);position:relative}
 .logo::after{content:'';position:absolute;inset:4px;border-radius:6px;background:#0b0f14}
 .title{font-weight:700}
-.badge{margin-left:.5rem;font-size:12px;color:#0b0f14;background:#0ea5e9;padding:.15rem .45rem;border-radius:8px;font-weight:700}
+.badge{
+ margin-left:.5rem;font-size:12px;color:#0b0f14;background:#0ea5e9;
+ padding:.15rem .45rem;border-radius:8px;font-weight:700
+}
 .search{display:flex;gap:.5rem;margin:.4rem .9rem 1rem}
-.search input{flex:1;padding:.8rem .9rem;border:1px solid var(--border);background:var(--bg2);color:var(--text);border-radius:12px;outline:none}
-.btn{appearance:none;border:none;border-radius:12px;padding:.7rem 1rem;font-weight:600;color:#0b0f14;background:linear-gradient(135deg,#0ea5e9,#22d3ee);cursor:pointer}
-.btn-secondary{color:var(--text);background:#18212d;border:1px solid var(--border);border-radius:12px;padding:.6rem .9rem}
+.search input{
+ flex:1;padding:.8rem .9rem;border:1px solid var(--border);
+ background:var(--bg2);color:var(--text);border-radius:12px;
+}
+.btn{
+ border:none;border-radius:12px;padding:.7rem 1rem;font-weight:600;
+ color:#0b0f14;background:linear-gradient(135deg,#0ea5e9,#22d3ee);
+ cursor:pointer
+}
+.btn-secondary{color:var(--text);background:#18212d;border:1px solid var(--border)}
 .wrap{padding:.5rem .9rem 5rem}
-.card{background:linear-gradient(180deg,#101622,#0f141a);border:1px solid var(--border);border-radius:16px;padding:1rem;margin:.7rem 0}
-.row{display:flex;gap:.6rem;flex-wrap:wrap}
-.row>*{flex:1 1 180px}
-label{color:var(--muted);font-size:12px;display:block;margin-bottom:.25rem}
-input[type=text],input[type=date],textarea,select{width:100%;padding:.7rem .8rem;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);outline:none}
-textarea{min-height:120px;resize:vertical}
-.item{padding:1rem;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#0f141a,#0c1117);display:grid;grid-template-columns:1fr auto;gap:.4rem;margin:.6rem 0}
-.item h3{margin:.2rem 0;font-size:16px}
+.item{
+ padding:1rem;border:1px solid var(--border);
+ border-radius:14px;margin:.6rem 0;
+ background:linear-gradient(180deg,#0f141a,#0c1117);
+ display:flex;justify-content:space-between;gap:.4rem;
+ flex-wrap:wrap;
+}
+.item h3{margin:.2rem 0;font-size:15px;font-weight:700}
 .meta{color:var(--muted);font-size:12px}
-.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}
-.tag{font-size:11px;color:#c7e8ff;background:#112232;border:1px solid #1b3b54;padding:.2rem .5rem;border-radius:999px}
-.pill{padding:.35rem .6rem;border-radius:12px;border:1px solid var(--border);color:var(--muted);font-size:12px;background:#121a25;cursor:pointer}
+.tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.3rem}
+.tag{font-size:11px;background:#112232;border:1px solid #1b3b54;
+ padding:.2rem .5rem;border-radius:999px;color:#c7e8ff}
+.pill{
+ padding:.4rem .7rem;border-radius:10px;
+ background:#121a25;border:1px solid var(--border);
+ font-size:12px;color:var(--muted);cursor:pointer
+}
+.card{
+ background:var(--card);border-radius:14px;border:1px solid var(--border);
+ padding:1rem;margin:.8rem 0
+}
 .hidden{display:none}
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#0ea5e9;color:#0b0f14;padding:.6rem 1rem;border-radius:10px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:.3s}
+.toast{
+ position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+ background:#0ea5e9;color:#0b0f14;padding:.6rem 1rem;border-radius:10px;
+ font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.3);opacity:0;transition:.3s
+}
 .toast.show{opacity:1}
-.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0008}
-.modal>.sheet{width:min(920px,92vw);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1rem}
+.modal{
+ position:fixed;inset:0;background:rgba(0,0,0,.6);
+ display:flex;justify-content:center;align-items:center;z-index:20
+}
+.modal > div{
+ background:#0f141a;padding:1rem;border-radius:14px;
+ width:90%;max-width:520px;
+}
+input,select,textarea{
+ width:100%;padding:.7rem;border-radius:12px;
+ border:1px solid var(--border);background:var(--bg2);
+ color:var(--text);outline:none;
+}
+textarea{min-height:120px;resize:vertical}
+.row{display:flex;gap:.5rem;flex-wrap:wrap}
+.row>*{flex:1 1 140px}
 </style>
 </head>
+
 <body>
 <header>
-  <div class="top">
-    <span class="logo" aria-hidden="true"></span>
-    <div class="title">Literature Log</div>
-    <span class="badge">HOTFIX v12</span>
-    <div style="margin-left:auto;display:flex;gap:.4rem">
-      <button class="btn-secondary" id="btnSettings">設定</button>
-      <button class="btn-secondary" id="btnFolders">フォルダ</button>
-    </div>
+ <div class="top">
+  <span class="logo"></span>
+  <span class="title">Literature Log</span>
+  <span class="badge">HOTFIX v13</span>
+  <div style="margin-left:auto;display:flex;gap:.4rem">
+   <button class="btn-secondary" id="btnSettings">設定</button>
+   <button class="btn-secondary" id="btnFolders">フォルダ</button>
   </div>
-  <div class="search">
-    <input id="q" type="text" placeholder="検索（タイトルEN/JA・抄録・著者・雑誌・タグ・フォルダ）">
-    <button class="btn" id="btnNew">追加</button>
-  </div>
+ </div>
+ <div class="search">
+  <input id="q" placeholder="検索（タイトルEN/JA・抄録・著者・雑誌・タグ・フォルダ）" />
+  <button class="btn" id="btnNew">追加</button>
+ </div>
 </header>
 
 <main class="wrap">
-  <!-- 入力フォーム -->
-  <section id="formCard" class="card hidden" aria-live="polite">
-    <h3 style="margin-top:0">新規 / 編集</h3>
-    <div class="row">
-      <div><label>読了日</label><input type="date" id="fldDate"></div>
-      <div><label>フォルダ</label><select id="fldFolder"></select></div>
-    </div>
-    <div class="row">
-      <div><label>PDFファイル</label><input type="file" id="fldPdf" accept="application/pdf"></div>
-      <div><label>タイトル（英：自動翻訳可）</label><input type="text" id="fldTitle"></div>
-    </div>
-    <div class="row">
-      <div><label>日本語タイトル</label><input type="text" id="fldTitleJa" placeholder="英タイトルを自動翻訳/手入力"></div>
-    </div>
-    <div class="row">
-      <div><label>著者</label><input type="text" id="fldAuthors"></div>
-      <div><label>掲載誌</label><input type="text" id="fldJournal"></div>
-      <div><label>公開日</label><input type="date" id="fldPubDate"></div>
-    </div>
-    <div class="row">
-      <div><label>要約（抄録の日本語サマリー）</label><textarea id="fldAbstract" placeholder="自動抽出/翻訳後に表示"></textarea></div>
-    </div>
-    <div class="row">
-      <div><label>タグ（カンマ区切り）</label><input type="text" id="fldTags" placeholder="例：電気刺激療法, 心不全"></div>
-    </div>
-    <div class="row">
-      <button class="btn" id="btnSave">保存</button>
-      <button class="btn-secondary" id="btnCancel">キャンセル</button>
-    </div>
-  </section>
-
-  <!-- 一覧 -->
-  <section id="list"></section>
-  <p id="emptyHint" class="hidden" style="color:var(--muted)">登録は「追加」から。PDFの抄録は自動抽出/翻訳します（見つからない場合はOCR/先頭サマリーに自動切替）。</p>
+ <p style="color:#8ab; font-size:13px;">登録は「追加」から。PDFの抄録は自動抽出/翻訳します。OCRにも自動切替。</p>
+ <section id="list"></section>
+ <p id="empty" class="meta hidden">まだデータがありません。</p>
 </main>
 
-<!-- 設定 -->
-<div id="dlgSettings" class="card hidden" style="position:fixed;inset:auto 0 0 0;margin:0;border-radius:16px 16px 0 0;">
-  <h3 style="margin-top:0">設定</h3>
+<!-- ===== Preview Modal ===== -->
+<div id="previewModal" class="modal hidden">
+ <div class="card">
+  <h3 id="pvTitle"></h3>
+  <p class="meta" id="pvAuthors"></p>
+  <p class="meta" id="pvJournal"></p>
+  <p class="meta" id="pvDate"></p>
+  <p class="meta" id="pvFolder"></p>
+  <p id="pvAbstract" style="margin-top:.6rem;font-size:14px;"></p>
+  <div style="display:flex;gap:.4rem;margin-top:1rem;flex-wrap:wrap">
+   <button class="btn-secondary" id="pvOpen">PDFを開く</button>
+   <button class="btn-secondary" id="pvEdit">編集</button>
+   <button class="btn-secondary" id="pvDel">削除</button>
+   <button class="btn" id="pvClose">閉じる</button>
+  </div>
+ </div>
+</div>
+
+<!-- ===== Form Modal ===== -->
+<div id="formModal" class="modal hidden">
+ <div class="card">
+  <h3 id="formTitle">新規登録</h3>
+  
+  <div class="row">
+   <div><label>読了日</label><input type="date" id="fldDate"></div>
+   <div><label>フォルダ</label><select id="fldFolder"></select></div>
+  </div>
+  <div class="row">
+   <div><label>PDFファイル</label><input type="file" id="fldPdf" accept="application/pdf"></div>
+  </div>
+  <div><label>タイトル（和：自動翻訳可）</label><input id="fldTitleJa"></div>
+  <div><label>タイトル（英）</label><input id="fldTitle"></div>
+  <div><label>著者</label><input id="fldAuthors"></div>
+  <div><label>掲載誌</label><input id="fldJournal"></div>
+  <div><label>公開日</label><input type="date" id="fldPubDate"></div>
+  <div><label>要約（日本語）</label><textarea id="fldAbstract"></textarea></div>
+  <div><label>タグ（カンマ区切り）</label><input id="fldTags"></div>
+
+  <div class="row" style="margin-top:.8rem">
+   <button class="btn" id="btnSave">保存</button>
+   <button class="btn-secondary" id="btnCancel">キャンセル</button>
+  </div>
+ </div>
+</div>
+
+<div id="dlgSettings" class="modal hidden">
+ <div class="card">
+  <h3>設定</h3>
   <label>OpenAI API Key</label>
-  <input type="text" id="fldApiKey" placeholder="sk-...">
-  <p class="meta">※ 端末ローカル（IndexedDB）にのみ保存されます。</p>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn" id="btnSaveSettings">OK</button>
-    <button class="btn-secondary" id="btnCloseSettings">閉じる</button>
-    <button class="btn-secondary" id="btnResetData" title="アプリデータを全消去">データ初期化（全消去）</button>
+  <input id="fldApiKey" placeholder="sk-..." />
+  <button class="btn" id="btnSaveSettings">OK</button>
+  <button class="btn-secondary" id="btnCloseSettings">閉じる</button>
+ </div>
+</div>
+
+<div id="dlgFolders" class="modal hidden">
+ <div class="card">
+  <h3>フォルダ管理</h3>
+  <div class="row">
+   <input id="fldNewFolder" placeholder="新規フォルダ名">
+   <button class="btn" id="btnAddFolder">追加</button>
   </div>
+  <ul id="folderList" style="padding-left:0;list-style:none;margin-top:1rem"></ul>
+  <button class="btn-secondary" id="btnCloseFolders">閉じる</button>
+ </div>
 </div>
 
-<!-- フォルダ -->
-<div id="dlgFolders" class="card hidden" style="position:fixed;inset:auto 0 0 0;margin:0;border-radius:16px 16px 0 0;">
-  <h3 style="margin-top:0">フォルダ</h3>
-  <div class="row"><div><label>新規フォルダ名</label><input type="text" id="fldNewFolder"></div><div style="align-self:end"><button class="btn" id="btnAddFolder">追加</button></div></div>
-  <ul id="folderList" style="list-style:none;padding-left:0"></ul>
-  <div><button class="btn-secondary" id="btnCloseFolders">閉じる</button></div>
-</div>
+<div id="toast" class="toast"></div>
 
-<!-- プレビュー -->
-<div id="dlgPreview" class="modal hidden" role="dialog" aria-modal="true">
-  <div class="sheet">
-    <h3 id="pvTitle" style="margin:0 0 .4rem 0"></h3>
-    <div class="meta" id="pvMeta"></div>
-    <p id="pvAbstract" style="margin-top:.6rem;"></p>
-    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">
-      <button class="btn-secondary" id="pvOpenPdf">PDFを開く</button>
-      <button class="btn-secondary" id="pvEdit">編集</button>
-      <button class="btn-secondary" id="pvDelete">削除</button>
-      <span style="flex:1"></span>
-      <button class="btn" id="pvClose">閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-<!-- 必要ライブラリ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
 <script>
-(()=>{ 'use strict';
-
-/* =========================
-   IndexedDB（新規に作り直し）
-   ========================= */
-const DB_NAME = 'litlog-db';
-const DB_VER  = 12; // 以前より大きい値にしてマイグレーション
+/**************************************************************
+ ✅ IndexedDB 初期化
+**************************************************************/
+const DB_NAME='litlog-db', DB_VER=5;
 let db;
-
 function openDB(){
-  return new Promise((res, rej)=>{
-    const req = indexedDB.open(DB_NAME, DB_VER);
-
-    req.onupgradeneeded = (e)=>{
-      const d = e.target.result;
-      // 古いストアを全削除してから作り直す（壊れた定義を排除）
-      ['entries','files','meta'].forEach(n=>{
-        if (d.objectStoreNames.contains(n)) d.deleteObjectStore(n);
-      });
-      const entries = d.createObjectStore('entries', { keyPath:'id', autoIncrement:true });
-      entries.createIndex('by_title','title');
-      entries.createIndex('by_folder','folder');
-      d.createObjectStore('files', { keyPath:'id' });
-      d.createObjectStore('meta',  { keyPath:'key' });
-    };
-
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror   = rej;
-  });
+ return new Promise((res,rej)=>{
+  const r=indexedDB.open(DB_NAME,DB_VER);
+  r.onupgradeneeded=e=>{
+   const d=e.target.result;
+   if(!d.objectStoreNames.contains('entries')){
+    const os=d.createObjectStore('entries',{keyPath:'id',autoIncrement:true});
+    os.createIndex('by_folder','folder');
+   }
+   if(!d.objectStoreNames.contains('files')){
+    d.createObjectStore('files',{keyPath:'id'});
+   }
+   if(!d.objectStoreNames.contains('meta')){
+    d.createObjectStore('meta',{keyPath:'key'});
+   }
+  };
+  r.onsuccess=e=>{db=e.target.result;res();}
+  r.onerror=rej;
+ });
 }
-function tx(mode, ...stores){ return db.transaction(stores, mode); }
-const putMeta=(key,val)=>new Promise((res,rej)=>{const t=tx('readwrite','meta');t.objectStore('meta').put({key,val});t.oncomplete=()=>res();t.onerror=rej;});
-const getMeta=(key)=>new Promise((res,rej)=>{const r=tx('readonly','meta').objectStore('meta').get(key);r.onsuccess=()=>res(r.result?.val);r.onerror=rej;});
-function putFile(id, blob){return new Promise((res,rej)=>{const t=tx('readwrite','files');t.objectStore('files').put({id,blob});t.oncomplete=()=>res();t.onerror=rej;});}
-function getFile(id){return new Promise((res,rej)=>{const r=tx('readonly','files').objectStore('files').get(id);r.onsuccess=()=>res(r.result?.blob||null);r.onerror=rej;});}
-function all(){return new Promise((res,rej)=>{const r=tx('readonly','entries').objectStore('entries').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=rej;});}
+const tx=(mode,...stores)=>db.transaction(stores,mode);
+const metaPut=(k,v)=>tx('readwrite','meta').objectStore('meta').put({key:k,val:v});
+const metaGet=k=>new Promise(r=>{
+ const q=tx('readonly','meta').objectStore('meta').get(k);
+ q.onsuccess=()=>r(q.result?.val||null);
+});
 
-/* ===== utilities ===== */
-const el=id=>document.getElementById(id);
-const toast=msg=>{const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
-let folders=['未分類'];
-
-/* ===== folders UI ===== */
-async function refreshFoldersUI(){
-  const ul=el('folderList'); ul.innerHTML='';
-  folders.forEach(f=>{
-    const li=document.createElement('li'); li.style.padding='.3rem 0';
-    li.innerHTML=`<span style="background:#1a2330;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;color:#9cc6ff">${f}</span>
-      <button class="btn-secondary" data-del="${f}" style="margin-left:.5rem">削除</button>`;
-    ul.appendChild(li);
-  });
-  const sel=el('fldFolder'); sel.innerHTML=folders.map(f=>`<option>${f}</option>`).join('');
-}
-async function loadFolders(){ const saved=await getMeta('folders'); if(Array.isArray(saved)&&saved.length) folders=saved; await refreshFoldersUI(); }
-
-/* ===== list render ===== */
-function render(items){
-  const list=el('list'), empty=el('emptyHint'); list.innerHTML='';
-  if(!items.length){ empty.classList.remove('hidden'); return; } empty.classList.add('hidden');
-
-  items.forEach(it=>{
-    const tags=(it.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
-    const div=document.createElement('div'); div.className='item'; div.dataset.id=it.id;
-    const titleLine = [it.title||'(無題)', it.titleJa? ` / ${it.titleJa}`:'' ].join('');
-    div.innerHTML = `
-      <div role="button" tabindex="0" class="js-open-preview">
-        <h3>${titleLine}</h3>
-        <div class="meta">${it.authors||''} ${it.journal? '・'+it.journal:''} ${it.pubDate? '・'+it.pubDate:''}</div>
-        <div class="meta">フォルダ：${it.folder||'未分類'}　読了日：${it.date||''}</div>
-        <div class="tags" aria-label="タグ">${tags}</div>
-        <p class="meta" style="margin-top:.3rem;color:#d6e2ee">${(it.abstract||'').slice(0,240)}${(it.abstract||'').length>240?'…':''}</p>
-        <div style="margin-top:.4rem">${it.fileId?'<a href="#" class="btn-secondary" data-open="'+it.fileId+'">PDFを開く</a>':''}</div>
-      </div>
-      <div><button class="pill js-edit">編集</button> <button class="pill js-del">削除</button></div>
-    `;
-    list.appendChild(div);
-  });
+/**************************************************************
+ ✅ Toast
+**************************************************************/
+function toast(msg){
+ const t=document.getElementById('toast');
+ t.textContent=msg;t.classList.add('show');
+ setTimeout(()=>t.classList.remove('show'),1500);
 }
 
-/* ===== filter & refresh ===== */
+/**************************************************************
+ ✅ プレビュー状態
+**************************************************************/
+let previewing=false, previewItem=null;
+const pvModal=document.getElementById('previewModal');
+
+/**************************************************************
+ ✅ PDF 抽出 + 翻訳
+**************************************************************/
+async function extractPDF(file){
+ try{
+  const ab=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+  let text=""; const pages=Math.min(3,pdf.numPages);
+  for(let i=1;i<=pages;i++){
+   const p=await pdf.getPage(i), c=await p.getTextContent();
+   text+=c.items.map(x=>x.str).join(" ")+" ";
+  }
+  return text;
+ }catch(e){return "";}
+}
+
+async function translateAbstract(en){
+ const key=await metaGet('openai_key'); if(!key) return "";
+ const res=await fetch("https://api.openai.com/v1/chat/completions",{
+  method:"POST",
+  headers:{ "Content-Type":"application/json","Authorization":"Bearer "+key },
+  body:JSON.stringify({
+   model:"gpt-4o-mini",
+   messages:[
+    {role:"system",content:"You translate academic abstracts to Japanese for physiotherapy. Accurate, no hallucinations."},
+    {role:"user",content:"次の英文抄録を自然で正確な日本語に翻訳してください:\n"+en}
+   ],
+   temperature:0.2
+  })
+ });
+ const j=await res.json();
+ return j.choices?.[0]?.message?.content?.trim()||"";
+}
+
+/**************************************************************
+ ✅ DB 操作
+**************************************************************/
+async function saveEntry(obj,pdfFile){
+ return new Promise((res,rej)=>{
+  const t=tx('readwrite','entries');
+  const store=t.objectStore('entries');
+  const r=obj.id?store.put(obj):store.add(obj);
+  r.onsuccess=async()=>{
+   if(pdfFile){
+    const fid="f_"+(obj.id||r.result);
+    await tx('readwrite','files').objectStore('files').put({id:fid,blob:pdfFile});
+    obj.fileId=fid;
+    await tx('readwrite','entries').objectStore('entries').put(obj);
+   }
+   res();
+  };
+  r.onerror=e=>rej(e);
+ });
+}
+
+function getFile(id){
+ return new Promise((res,rej)=>{
+  const r=tx('readonly','files').objectStore('files').get(id);
+  r.onsuccess=()=>res(r.result?.blob||null);
+  r.onerror=rej;
+ });
+}
+
+/**************************************************************
+ ✅ UI 更新
+**************************************************************/
 async function refresh(){
-  const q = el('q').value.trim().toLowerCase();
-  const items = await all();
-  const f = q ? items.filter(it=>{
-    const hay = [
-      it.title, it.titleJa, it.abstract, it.authors, it.journal, (it.tags||[]).join(','), it.folder
-    ].join(' ').toLowerCase();
-    return hay.includes(q);
-  }) : items;
-  f.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id-a.id);
-  render(f);
+ previewing=false;previewItem=null;
+ pvModal.classList.add("hidden");
+ const q=document.getElementById("q").value.toLowerCase();
+ const items=await new Promise(r=>{
+  const req=tx('readonly','entries').objectStore('entries').getAll();
+  req.onsuccess=()=>r(req.result||[]);
+ });
+ items.sort((a,b)=> (b.date||"").localeCompare(a.date||"") || b.id-a.id);
+ const f=q?items.filter(it=>{
+  const s=[it.title,it.titleJa,it.abstract,it.authors,it.journal,(it.tags||[]).join(","),it.folder]
+   .join(" ").toLowerCase();
+  return s.includes(q);
+ }):items;
+ const list=document.getElementById("list");
+ list.innerHTML="";
+ if(!f.length){document.getElementById('empty').classList.remove("hidden");return;}
+ document.getElementById('empty').classList.add("hidden");
+ f.forEach(it=>{
+  const div=document.createElement("div");
+  div.className="item";
+  div.innerHTML=`
+   <div style="flex:1;min-width:260px;cursor:pointer">
+    <h3>${it.titleJa||it.title||"(無題)"}</h3>
+    <div class="meta">${it.authors||""}</div>
+    <div class="meta">${it.journal||""}・${it.pubDate||""}</div>
+    <div class="meta">📁 ${it.folder||"未分類"} / ${it.date||""}</div>
+    <p style="font-size:12px;margin-top:.3rem;">${(it.abstract||"").slice(0,180)}...</p>
+   </div>
+   <button class="pill" data-id="${it.id}">操作</button>
+  `;
+  div.addEventListener("click",e=>{
+   if(e.target.dataset.id) return;
+   showPreview(it);
+  });
+  list.appendChild(div);
+  document.querySelector(`button[data-id="${it.id}"]`).onclick=()=>showPreview(it);
+ });
 }
 
-/* ===== PDF helpers ===== */
-async function extractFromPdfText(file){
-  const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
-  let info={}; try{const meta=await pdf.getMetadata(); info=meta?.info||{};}catch{}
-  let title=info.Title||''; let authors=info.Author||'';
-  let text=''; const maxPages=Math.min(4,pdf.numPages);
-  for(let p=1;p<=maxPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); const t=content.items.map(i=>i.str).join(' '); text+='\n'+t;}
-  if(!title){ const first=(text.split('\n').map(s=>s.trim()).filter(Boolean)[0]||''); title=first.slice(0,160); }
-  let abstract=''; const tLow=text.toLowerCase();
-  const markers=[/abstract[:\s]/i,/summary[:\s]/i,/要旨[:：\s]/,/背景[:：\s]/,/目的[:：\s]/];
-  let start=-1; for(const m of markers){ const idx=tLow.search(m); if(idx>=0){start=idx;break;} }
-  if(start>=0){ abstract=text.slice(start).replace(/^.*?(abstract|summary|要旨|抄録)[:：]?\s*/i,'').trim(); }
-  abstract=abstract.split(/(introduction|background|methods|materials|結果|方法|結論|discussion)/i)[0]||abstract;
-  return {title,authors,abstract,text};
+function showPreview(it){
+ previewing=true;previewItem=it;
+ document.getElementById('pvTitle').textContent = it.titleJa||it.title;
+ document.getElementById('pvAuthors').textContent = it.authors||"";
+ document.getElementById('pvJournal').textContent = it.journal||"";
+ document.getElementById('pvDate').textContent = "読了日: "+(it.date||"");
+ document.getElementById('pvFolder').textContent = "📁 "+(it.folder||"未分類");
+ document.getElementById('pvAbstract').textContent = it.abstract||"";
+ pvModal.classList.remove("hidden");
 }
 
-async function ocrFirstPage(file){
-  try{
-    const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
-    const page=await pdf.getPage(1); const viewport=page.getViewport({scale:1.6});
-    const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d');
-    canvas.width=viewport.width; canvas.height=viewport.height;
-    await page.render({canvasContext:ctx, viewport}).promise;
-    const dataUrl=canvas.toDataURL('image/png');
-    const res= await Tesseract.recognize(dataUrl,'eng',{logger:m=>console.log('[OCR]',m.status,m.progress||'')});
-    return res.data.text||'';
-  }catch(e){ console.warn('OCR failed', e); return ''; }
+/**************************************************************
+ ✅ フォーム
+**************************************************************/
+function openForm(edit){
+ document.getElementById("formModal").classList.remove("hidden");
+ if(edit){
+  const o=previewItem;
+  document.getElementById("formTitle").textContent="編集";
+  fldDate.value=o.date; fldFolder.value=o.folder||"未分類";
+  fldTitleJa.value=o.titleJa||""; fldTitle.value=o.title||"";
+  fldAuthors.value=o.authors||""; fldJournal.value=o.journal||"";
+  fldPubDate.value=o.pubDate||""; fldAbstract.value=o.abstract||"";
+  fldTags.value=(o.tags||[]).join(","); 
+  btnSave.onclick=()=>save(o.id,o.fileId);
+ } else {
+  document.getElementById("formTitle").textContent="新規登録";
+  fldDate.value=new Date().toISOString().slice(0,10);
+  fldFolder.value=folders[0]||"未分類";
+  fldTitleJa.value=""; fldTitle.value="";
+  fldAuthors.value=""; fldJournal.value="";
+  fldPubDate.value=""; fldAbstract.value="";
+  fldTags.value="";
+  btnSave.onclick=()=>save();
+ }
 }
 
-/* ===== OpenAI 翻訳 ===== */
-async function translateJa(text){
-  const key = await getMeta('openai_key'); if(!key) return null;
-  const body={model:"gpt-4o-mini",messages:[
-    {role:"system",content:"You are a professional medical translator for physiotherapy. Output ONLY Japanese translation; no headings."},
-    {role:"user",content:text}
-  ],temperature:0.1};
-  try{
-    const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify(body)});
-    if(!res.ok) return null; const data=await res.json(); return (data.choices?.[0]?.message?.content||'').trim();
-  }catch{ return null; }
+async function save(existingId=null,existingFileId=null){
+ const pdfFile=fldPdf.files[0]||null;
+ let ja=fldTitleJa.value.trim();
+ if(!ja && fldTitle.value.trim()){
+  ja = await translateAbstract(fldTitle.value.trim());
+ }
+ const o={
+  id:existingId||undefined,
+  date:fldDate.value,
+  folder:fldFolder.value||"未分類",
+  title:fldTitle.value.trim(),
+  titleJa:ja.trim(),
+  authors:fldAuthors.value.trim(),
+  journal:fldJournal.value.trim(),
+  pubDate:fldPubDate.value,
+  abstract:fldAbstract.value.trim(),
+  tags:fldTags.value.split(",").map(s=>s.trim()).filter(Boolean),
+  fileId:existingFileId||null
+ };
+ if(!o.title && !o.titleJa) return toast("タイトル必須");
+ try{
+  await saveEntry(o,pdfFile);
+  toast("保存しました");
+  document.getElementById("formModal").classList.add("hidden");
+  refresh();
+ }catch(e){alert("保存エラー："+e);}
 }
 
-/* ===== form helpers ===== */
-function showForm(show=true){ el('formCard').classList.toggle('hidden',!show); if(show) el('emptyHint').classList.add('hidden'); }
-function resetForm(){
-  el('fldPdf').value=''; el('fldTitle').value=''; el('fldTitleJa').value='';
-  el('fldAuthors').value=''; el('fldJournal').value=''; el('fldPubDate').value='';
-  el('fldAbstract').value=''; el('fldTags').value='';
-  el('fldDate').value=new Date().toISOString().slice(0,10);
-  el('fldFolder').value=folders[0]||'未分類';
+/**************************************************************
+ ✅ 初期化
+**************************************************************/
+let folders=["未分類"];
+async function init(){
+ await openDB();
+ const saved=await metaGet("folders");
+ if(Array.isArray(saved)&&saved.length) folders=saved;
+ fldFolder.innerHTML=folders.map(f=>`<option>${f}</option>`).join("");
+ refresh();
+}
+init();
+
+/**************************************************************
+ ✅ イベント
+**************************************************************/
+document.getElementById("btnNew").onclick=()=>openForm();
+document.getElementById("btnCancel").onclick=()=>formModal.classList.add("hidden");
+document.getElementById("q").oninput=refresh;
+document.getElementById("pvClose").onclick=()=>pvModal.classList.add("hidden");
+document.getElementById("pvEdit").onclick=()=>{pvModal.classList.add("hidden");openForm(true);}
+document.getElementById("pvDel").onclick=async()=>{
+ if(!confirm("削除しますか？"))return;
+ await tx('readwrite','entries').objectStore('entries').delete(previewItem.id);
+ if(previewItem.fileId) await tx('readwrite','files').objectStore('files').delete(previewItem.fileId);
+ pvModal.classList.add("hidden"); refresh();
+}
+document.getElementById("pvOpen").onclick=async()=>{
+ const blob=await getFile(previewItem.fileId);
+ const url=URL.createObjectURL(blob);
+ window.open(url,"_blank");
 }
 
-/* ===== 保存（★根治版） ===== */
-async function saveEntry(existingId=null, existingFileId=null){
-  try{
-    const o = {
-      date:   el('fldDate').value || new Date().toISOString().slice(0,10),
-      folder: el('fldFolder').value || '未分類',
-      title:  el('fldTitle').value.trim(),
-      titleJa: el('fldTitleJa').value.trim(),
-      authors: el('fldAuthors').value.trim(),
-      journal: el('fldJournal').value.trim(),
-      pubDate: el('fldPubDate').value,
-      abstract: el('fldAbstract').value.trim(),
-      tags: el('fldTags').value.split(',').map(s=>s.trim()).filter(Boolean),
-      fileId: existingFileId || null
-    };
-    if(!o.title){ alert('タイトル（英）を入力してください'); return; }
-
-    const store = tx('readwrite','entries').objectStore('entries');
-    let req;
-    if (Number.isFinite(existingId)) {
-      o.id = existingId;             // 更新時のみ id を持たせる
-      req  = store.put(o);
-    } else {
-      if ('id' in o) delete o.id;    // 念のため完全除去
-      req  = store.add(o);
-    }
-
-    await new Promise((res,rej)=>{
-      req.onsuccess = e => { if(!Number.isFinite(existingId)) o.id = e.target.result; res(); };
-      req.onerror   = e => rej(e.target?.error || e);
-    });
-
-    const pdfFile = el('fldPdf').files?.[0] || null;
-    if (pdfFile){
-      const fid = 'f_'+o.id;
-      await putFile(fid, pdfFile);
-      o.fileId = fid;
-      await new Promise((res,rej)=>{
-        const t=tx('readwrite','entries'); t.objectStore('entries').put(o);
-        t.oncomplete=()=>res(); t.onerror=rej;
-      });
-    }
-
-    toast('保存しました'); showForm(false); await refresh();
-  }catch(e){
-    console.error('SAVE ERR', e);
-    alert('保存に失敗しました：'+(e?.message||e));
-  }
+/* Settings */
+btnSettings.onclick=async()=>{
+ fldApiKey.value=await metaGet("openai_key")||"";
+ dlgSettings.classList.remove("hidden");
 }
+btnSaveSettings.onclick=async()=>{
+ await metaPut("openai_key",fldApiKey.value.trim());
+ dlgSettings.classList.add("hidden");
+ toast("APIキー保存");
+}
+btnCloseSettings.onclick=()=>dlgSettings.classList.add("hidden");
 
-/* ===== イベント配線 ===== */
-el('q').addEventListener('input', refresh);
-
-el('btnNew').addEventListener('click', ()=>{
-  resetForm(); showForm(true);
-  el('btnSave').onclick = ()=>saveEntry();       // 新規保存
-});
-el('btnCancel').addEventListener('click', ()=> showForm(false));
-
-/* 設定 */
-const dlgSettings=el('dlgSettings');
-el('btnSettings').addEventListener('click', async ()=>{
-  dlgSettings.classList.remove('hidden');
-  el('fldApiKey').value = (await getMeta('openai_key'))||'';
-});
-el('btnSaveSettings').addEventListener('click', async ()=>{
-  await putMeta('openai_key', el('fldApiKey').value.trim());
-  dlgSettings.classList.add('hidden'); toast('設定を保存しました');
-});
-el('btnCloseSettings').addEventListener('click', ()=> dlgSettings.classList.add('hidden'));
-el('btnResetData').addEventListener('click', async ()=>{
-  if(!confirm('アプリの保存データ（IndexedDB）を全て削除します。よろしいですか？')) return;
-  await new Promise((res,rej)=>{ const del=indexedDB.deleteDatabase(DB_NAME); del.onsuccess=()=>res(); del.onerror=rej; });
-  toast('データを初期化しました。再読み込みします…'); setTimeout(()=>location.reload(), 400);
-});
-
-/* フォルダ */
-const dlgFolders=el('dlgFolders');
-el('btnFolders').addEventListener('click', ()=> dlgFolders.classList.remove('hidden'));
-el('btnCloseFolders').addEventListener('click', ()=> dlgFolders.classList.add('hidden'));
-el('btnAddFolder').addEventListener('click', async ()=>{
-  const name=el('fldNewFolder').value.trim(); if(!name) return;
-  if(!folders.includes(name)) folders.push(name);
-  await putMeta('folders', folders); el('fldNewFolder').value=''; await refreshFoldersUI();
-});
-el('folderList').addEventListener('click', async (e)=>{
-  const name=e.target.getAttribute('data-del'); if(!name) return;
-  if(name==='未分類') return alert('未分類は削除できません。');
-  if(!confirm(`フォルダ「${name}」を削除しますか？`)) return;
-  folders = folders.filter(f=>f!==name); await putMeta('folders', folders);
-  await refreshFoldersUI(); await refresh();
-});
-
-/* PDF選択時：メタ抽出＋翻訳（題名/抄録） */
-el('fldPdf').addEventListener('change', async ()=>{
-  const f = el('fldPdf').files?.[0]; if(!f) return;
-  try{
-    const res=await extractFromPdfText(f);
-    if(!el('fldTitle').value && res.title)   el('fldTitle').value = res.title;
-    if(!el('fldAuthors').value && res.authors) el('fldAuthors').value = res.authors;
-
-    // 抄録英→日
-    let abstract = (res.abstract||'').trim();
-    if(!abstract){ const ocr = await ocrFirstPage(f); if(ocr && ocr.trim().length>40) abstract = ocr.slice(0,1200).trim(); }
-    if(abstract && /[A-Za-z]/.test(abstract) && !/[一-龥ぁ-んァ-ン]/.test(abstract)){
-      const ja = await translateJa(abstract); if(ja) el('fldAbstract').value = ja; else el('fldAbstract').value = abstract;
-    }else{ el('fldAbstract').value = abstract; }
-
-    // タイトル英→日（任意）
-    if(el('fldTitle').value && !el('fldTitleJa').value){
-      const tj = await translateJa(el('fldTitle').value); if(tj) el('fldTitleJa').value = tj.replace(/\n+/g,' ');
-    }
-  }catch(e){ console.error('PDF parse error', e); alert('PDFの読み取りに失敗しました'); }
-});
-
-/* 一覧のクリック（プレビュー/編集/削除/開く） */
-el('list').addEventListener('click', async (ev)=>{
-  const wrap = ev.target.closest('.item'); if(!wrap) return;
-  const id   = Number(wrap.dataset.id);
-  const items= await all(); const it = items.find(x=>x.id===id); if(!it) return;
-
-  if(ev.target.matches('.js-edit')){
-    // 編集フォームに展開
-    resetForm(); showForm(true);
-    el('fldDate').value = it.date||'';
-    el('fldFolder').value = it.folder||folders[0];
-    el('fldTitle').value = it.title||'';
-    el('fldTitleJa').value = it.titleJa||'';
-    el('fldAuthors').value= it.authors||'';
-    el('fldJournal').value= it.journal||'';
-    el('fldPubDate').value= it.pubDate||'';
-    el('fldAbstract').value= it.abstract||'';
-    el('fldTags').value    = (it.tags||[]).join(', ');
-    el('btnSave').onclick  = ()=>saveEntry(it.id, it.fileId||null);
-    return;
-  }
-  if(ev.target.matches('.js-del')){
-    if(!confirm('削除しますか？')) return;
-    await new Promise((res,rej)=>{
-      const t=tx('readwrite','entries'); t.objectStore('entries').delete(id);
-      t.oncomplete=()=>res(); t.onerror=rej;
-    });
-    toast('削除しました'); await refresh(); return;
-  }
-  if(ev.target.hasAttribute('data-open')){
-    const fid = ev.target.getAttribute('data-open'); const blob = await getFile(fid);
-    if(!blob){ alert('PDFが見つかりません'); return; }
-    const url = URL.createObjectURL(blob); window.open(url,'_blank'); return;
-  }
-  if(ev.target.closest('.js-open-preview') || ev.target.classList.contains('js-open-preview')){
-    // プレビュー表示
-    el('pvTitle').textContent = [it.title||'(無題)', it.titleJa? ` / ${it.titleJa}`:'' ].join('');
-    el('pvMeta').textContent  = [it.authors||'', it.journal||'', it.pubDate||''].filter(Boolean).join(' ・ ');
-    el('pvAbstract').textContent = it.abstract||'';
-    el('dlgPreview').classList.remove('hidden');
-    el('pvOpenPdf').onclick = async ()=>{
-      if(!it.fileId){ alert('PDFが添付されていません'); return; }
-      const blob = await getFile(it.fileId); if(!blob){ alert('PDFが見つかりません'); return; }
-      const url = URL.createObjectURL(blob); window.open(url,'_blank');
-    };
-    el('pvEdit').onclick = ()=>{
-      el('dlgPreview').classList.add('hidden');
-      wrap.querySelector('.js-edit').click();
-    };
-    el('pvDelete').onclick = async ()=>{
-      el('dlgPreview').classList.add('hidden');
-      wrap.querySelector('.js-del').click();
-    };
-  }
-});
-el('pvClose').addEventListener('click', ()=> el('dlgPreview').classList.add('hidden'));
-
-/* init */
-(async function init(){
-  await openDB(); await loadFolders();
-  el('fldDate').value=new Date().toISOString().slice(0,10);
-  el('fldFolder').value=folders[0];
-  await refresh();
-})();
-})();</script>
+/* Folders */
+btnFolders.onclick=()=>{
+ folderList.innerHTML = folders.map(f=>`<li style="margin:.4rem 0">${f} <button class="pill del" data-f="${f}">削除</button></li>`).join("");
+ dlgFolders.classList.remove("hidden");
+}
+btnAddFolder.onclick=async()=>{
+ const name=fldNewFolder.value.trim(); if(!name) return;
+ if(!folders.includes(name)) folders.push(name);
+ await metaPut("folders",folders);
+ fldNewFolder.value="";
+ btnFolders.onclick();
+}
+folderList.onclick=async e=>{
+ const f=e.target.dataset.f; if(!f || f=="未分類")return;
+ if(!confirm(`${f} を削除?`))return;
+ folders=folders.filter(x=>x!==f);
+ await metaPut("folders",folders);
+ btnFolders.onclick();refresh();
+}
+btnCloseFolders.onclick=()=>dlgFolders.classList.add("hidden");
+</script>
 </body>
 </html>
